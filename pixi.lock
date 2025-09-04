@@ -213,10 +213,12 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/rfc3987-syntax-1.1.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/rioxarray-0.19.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/rpds-py-0.26.0-py313h4b2b08d_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/rustac-0.8.1-py313h6484a44_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/s3fs-2025.7.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/scipy-1.16.0-py313h86fcf2b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/send2trash-1.8.3-pyh0d859eb_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/setuptools-80.9.0-pyhff2d567_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/shapely-2.1.1-py313h393e2d1_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/six-1.17.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/snappy-1.2.2-h03e3b7b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/sniffio-1.3.1-pyhd8ed1ab_1.conda
@@ -466,10 +468,12 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/rfc3987-syntax-1.1.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/rioxarray-0.19.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/rpds-py-0.26.0-py313hb35714d_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/rustac-0.8.1-py313h465a76f_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/s3fs-2025.7.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/scipy-1.16.0-py313h7e69c36_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/send2trash-1.8.3-pyh31c8845_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/setuptools-80.9.0-pyhff2d567_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/shapely-2.1.1-py313h294d5b0_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/six-1.17.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/snappy-1.2.2-h25c286d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/sniffio-1.3.1-pyhd8ed1ab_1.conda
@@ -719,10 +723,12 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/rfc3987-syntax-1.1.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/rioxarray-0.19.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/rpds-py-0.26.0-py313hf3ab51e_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/rustac-0.8.1-py313hfbe88c3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/s3fs-2025.7.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/scipy-1.16.0-py313h9a24e0a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/send2trash-1.8.3-pyh31c8845_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/setuptools-80.9.0-pyhff2d567_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/shapely-2.1.1-py313h156a44d_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/six-1.17.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/snappy-1.2.2-hd121638_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/sniffio-1.3.1-pyhd8ed1ab_1.conda
@@ -960,10 +966,12 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/rfc3987-syntax-1.1.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/rioxarray-0.19.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/rpds-py-0.26.0-py313hfbe8231_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/win-64/rustac-0.8.1-py313h7dfc4c0_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/s3fs-2025.7.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/scipy-1.16.0-py313h97dfcff_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/send2trash-1.8.3-pyh5737063_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/setuptools-80.9.0-pyhff2d567_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/win-64/shapely-2.1.1-py313hd420520_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/six-1.17.0-pyhe01879c_1.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/snappy-1.2.2-h7fa0ca8_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/sniffio-1.3.1-pyhd8ed1ab_1.conda
@@ -7625,6 +7633,70 @@ packages:
   - pkg:pypi/rpds-py?source=hash-mapping
   size: 250938
   timestamp: 1751467095409
+- conda: https://conda.anaconda.org/conda-forge/linux-64/rustac-0.8.1-py313h6484a44_0.conda
+  sha256: 316af294675a4eedfa1f45cb21f94bb7510ad62d0d5755be9b4bb41d77deaff4
+  md5: 911cffded631ce9dd28d5f85fc0984c8
+  depends:
+  - python
+  - libstdcxx >=13
+  - libgcc >=13
+  - __glibc >=2.17,<3.0.a0
+  - python_abi 3.13.* *_cp313
+  constrains:
+  - __glibc >=2.17
+  license: MIT OR Apache-2.0
+  purls:
+  - pkg:pypi/rustac?source=hash-mapping
+  size: 18990637
+  timestamp: 1750122705143
+- conda: https://conda.anaconda.org/conda-forge/osx-64/rustac-0.8.1-py313h465a76f_0.conda
+  sha256: 8c2af2a04dcbe8338f0fd2a9e668de53166a2f29c1d316acb749d0c0e2714039
+  md5: 85754d40be22afec01ba64e00c4f0c23
+  depends:
+  - python
+  - libcxx >=18
+  - __osx >=10.13
+  - python_abi 3.13.* *_cp313
+  constrains:
+  - __osx >=10.13
+  license: MIT OR Apache-2.0
+  purls:
+  - pkg:pypi/rustac?source=hash-mapping
+  size: 16955723
+  timestamp: 1750122747470
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/rustac-0.8.1-py313hfbe88c3_0.conda
+  sha256: 00fae1247871e356c7ad3fd6b5e53b3412abff8f8ef9b3b05b0731d2cffbbe38
+  md5: 0ae2afeddf7c1234478f3a2ca7de7754
+  depends:
+  - python
+  - __osx >=11.0
+  - libcxx >=18
+  - python 3.13.* *_cp313
+  - python_abi 3.13.* *_cp313
+  constrains:
+  - __osx >=11.0
+  license: MIT OR Apache-2.0
+  purls:
+  - pkg:pypi/rustac?source=hash-mapping
+  size: 15282523
+  timestamp: 1750122847014
+- conda: https://conda.anaconda.org/conda-forge/win-64/rustac-0.8.1-py313h7dfc4c0_0.conda
+  sha256: 17a967e124bdd116ba280b83d71cff672ecb914945e79be9490bb926d1753669
+  md5: eae11c9cc75b6c21b704138bf629bf95
+  depends:
+  - python
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  - ucrt >=10.0.20348.0
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  - ucrt >=10.0.20348.0
+  - python_abi 3.13.* *_cp313
+  license: MIT OR Apache-2.0
+  purls:
+  - pkg:pypi/rustac?source=hash-mapping
+  size: 16811757
+  timestamp: 1750122717288
 - conda: https://conda.anaconda.org/conda-forge/noarch/s3fs-2025.7.0-pyhd8ed1ab_0.conda
   sha256: 38addc258cf69e39c2df88c4c4995a2108ad782437bbae357b69493216c813db
   md5: 00502db3bc89fb08171b34ccfcbf8046
@@ -7779,6 +7851,70 @@ packages:
   - pkg:pypi/setuptools?source=hash-mapping
   size: 748788
   timestamp: 1748804951958
+- conda: https://conda.anaconda.org/conda-forge/linux-64/shapely-2.1.1-py313h393e2d1_1.conda
+  sha256: 06f186777cfa2a275a51ee5bd13e1e046e7696a960728d67eb50c5e1d911e542
+  md5: f011e295df4ae7ab52301e529c02c091
+  depends:
+  - __glibc >=2.17,<3.0.a0
+  - geos >=3.13.1,<3.13.2.0a0
+  - libgcc >=14
+  - numpy >=1.23,<3
+  - python >=3.13,<3.14.0a0
+  - python_abi 3.13.* *_cp313
+  license: BSD-3-Clause
+  license_family: BSD
+  purls:
+  - pkg:pypi/shapely?source=compressed-mapping
+  size: 654334
+  timestamp: 1756511591900
+- conda: https://conda.anaconda.org/conda-forge/osx-64/shapely-2.1.1-py313h294d5b0_1.conda
+  sha256: 4029805a73780846e3516fa8a37a6995e2996c981933fc454d2087a909bbd000
+  md5: 3b9560b5f1dcb5b1fdc35f611dd92060
+  depends:
+  - __osx >=10.13
+  - geos >=3.13.1,<3.13.2.0a0
+  - numpy >=1.23,<3
+  - python >=3.13,<3.14.0a0
+  - python_abi 3.13.* *_cp313
+  license: BSD-3-Clause
+  license_family: BSD
+  purls:
+  - pkg:pypi/shapely?source=compressed-mapping
+  size: 620853
+  timestamp: 1756511835773
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/shapely-2.1.1-py313h156a44d_1.conda
+  sha256: c6d627e7116e3a3d1168a4a742a3a651864c2936adc6b1ad20505827f6b43ae7
+  md5: 06500d9b98a441494c43ce09ff3fcba8
+  depends:
+  - __osx >=11.0
+  - geos >=3.13.1,<3.13.2.0a0
+  - numpy >=1.23,<3
+  - python >=3.13,<3.14.0a0
+  - python >=3.13,<3.14.0a0 *_cp313
+  - python_abi 3.13.* *_cp313
+  license: BSD-3-Clause
+  license_family: BSD
+  purls:
+  - pkg:pypi/shapely?source=compressed-mapping
+  size: 615488
+  timestamp: 1756511887791
+- conda: https://conda.anaconda.org/conda-forge/win-64/shapely-2.1.1-py313hd420520_1.conda
+  sha256: d4ad374ec5db258c8ef68dabd9dfd2f4e37faf6cc19a02a387de3bfe2b5c0adb
+  md5: 676152bc6961e12941f208e59c1bcab9
+  depends:
+  - geos >=3.13.1,<3.13.2.0a0
+  - numpy >=1.23,<3
+  - python >=3.13,<3.14.0a0
+  - python_abi 3.13.* *_cp313
+  - ucrt >=10.0.20348.0
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  license: BSD-3-Clause
+  license_family: BSD
+  purls:
+  - pkg:pypi/shapely?source=hash-mapping
+  size: 613838
+  timestamp: 1756511745849
 - conda: https://conda.anaconda.org/conda-forge/noarch/six-1.17.0-pyhe01879c_1.conda
   sha256: 458227f759d5e3fcec5d9b7acce54e10c9e1f4f4b7ec978f3bfd54ce4ee9853d
   md5: 3339e3b65d58accf4ca4fb8748ab16b3
