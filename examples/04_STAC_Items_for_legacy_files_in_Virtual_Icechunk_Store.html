@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.34">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Creating STAC Items for a legacgy files referenced by Virtual Icechunk Store</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-a7305f237f2265b8d0102c21e84b8f2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-d6c44cae984865ecf21b2c596978e127.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-a7305f237f2265b8d0102c21e84b8f2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Creating STAC Items for a legacgy files referenced by Virtual Icechunk Store</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>There is a virtual icechunk store that is publicly available at: s3://nasa-waterinsight/virtual-zarr-store/NLDAS-3-icechunk/</p>
+<p>This notebook goes through the current thinking for how you would set up STAC items that point to the legacy file formats referenced by the virtual store.</p>
+<div id="6eb787d3-2e2c-4f72-9aed-12022fa6f5c9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:34:19.234297Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:34:19.234129Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:34:20.634162Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:34:20.633495Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:34:19.234279Z&quot;}}" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> icechunk</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> zarr</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xstac</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Zarr can emit a lot of warnings about Numcodecs not being including in the Zarr version 3 specification yet – let’s suppress those.</p>
+<div id="93265dde-ef61-4217-b0e1-b6e68095febe" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:34:20.634775Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:34:20.634637Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:34:20.637507Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:34:20.637032Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:34:20.634761Z&quot;}}" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ignore"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    message<span class="op">=</span><span class="st">"Numcodecs codecs are not in the Zarr version 3 specification*"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    category<span class="op">=</span><span class="pp">UserWarning</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>These are the PRs that need to land before you can open the virtual icechunk store with zarr directly:</p>
+<ul>
+<li>https://github.com/zarr-developers/zarr-python/pull/3369</li>
+<li>https://github.com/earth-mover/icechunk/pull/1161</li>
+</ul>
+<p>Until then:</p>
+<div id="ac29867a-c95e-4956-b370-dceb0dd1bd94" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:34:20.638131Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:34:20.637978Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:34:24.816701Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:34:24.815618Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:34:20.638118Z&quot;}}" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>storage <span class="op">=</span> icechunk.s3_storage(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    bucket<span class="op">=</span><span class="st">"nasa-waterinsight"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    prefix<span class="op">=</span><span class="st">"virtual-zarr-store/NLDAS-3-icechunk/"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    region<span class="op">=</span><span class="st">"us-west-2"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    anonymous<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> icechunk.RepositoryConfig.default()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>config.set_virtual_chunk_container(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    icechunk.VirtualChunkContainer(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"s3://nasa-waterinsight/NLDAS3/forcing/daily/"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        icechunk.s3_store(region<span class="op">=</span><span class="st">"us-west-2"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>virtual_credentials <span class="op">=</span> icechunk.containers_credentials(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"s3://nasa-waterinsight/NLDAS3/forcing/daily/"</span>: icechunk.s3_anonymous_credentials()</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>repo <span class="op">=</span> icechunk.Repository.<span class="bu">open</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    storage<span class="op">=</span>storage,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>config,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    authorize_virtual_chunk_access<span class="op">=</span>virtual_credentials,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>session <span class="op">=</span> repo.readonly_session(<span class="st">'main'</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> xr.open_zarr(session.store, consolidated<span class="op">=</span><span class="va">False</span>, zarr_format<span class="op">=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>From this virtual icechunk store we can get the locations of all the chunks. This technically only accesses a single snapshot, so to get them all you might have to recurse back through time (https://github.com/earth-mover/icechunk/issues/1194). In this case though</p>
+<p>Note that this takes some time.</p>
+<div id="cf9ea3ee-6bc0-4ed8-8566-d7b9fcb38f21" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:34:24.817220Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:34:24.817015Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:11.948332Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:11.947801Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:34:24.817209Z&quot;}}" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>chunk_locations <span class="op">=</span> session.all_virtual_chunk_locations()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 24.2 s, sys: 3.16 s, total: 27.4 s
+Wall time: 47.1 s</code></pre>
+</div>
+</div>
+<div id="09698f27-2e51-4558-8db8-676adb7e1566" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:11.960768Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:11.960416Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:11.965235Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:11.964381Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:11.960752Z&quot;}}" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(chunk_locations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>14194310</code></pre>
+</div>
+</div>
+<p>That gives the locations of every chunk. So we need to deduplicate it to get a list of files</p>
+<div id="567fc0ab-94f8-4921-844c-a7a83691a431" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:11.966059Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:11.965842Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:12.457196Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:12.456609Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:11.966041Z&quot;}}" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>legacy_files <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">list</span>(<span class="bu">set</span>(chunk_locations)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e06b3988-9ee0-4af2-8113-56dbcaf5cf24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:12.457579Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:12.457471Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:12.475093Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:12.474607Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:12.457567Z&quot;}}" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>legacy_files[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>['s3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010101.030.beta.nc',
+ 's3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010102.030.beta.nc',
+ 's3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010103.030.beta.nc',
+ 's3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010104.030.beta.nc',
+ 's3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010105.030.beta.nc']</code></pre>
+</div>
+</div>
+<p>As a sanity check we can just confirm that we have the same number of files as we do timesteps.</p>
+<div id="1920fb20-01a0-4d2a-b10b-66ec8b961a44" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:12.475590Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:12.475459Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:12.477857Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:12.477499Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:12.475578Z&quot;}}" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(legacy_files) <span class="op">==</span> <span class="bu">len</span>(ds.time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For instance here is the chunkgrid for <code>ds.PSurf</code></p>
+<div id="7c83fce3-5861-4d36-a283-6a806121ddb4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:12.478311Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:12.478199Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:12.480860Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:12.480548Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:12.478300Z&quot;}}" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ds.PSurf.data.numblocks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>(8399, 13, 13)</code></pre>
+</div>
+</div>
+<p>You can multiply all those numbers together to get the total number of chunks</p>
+<div id="252d6b18-03f4-4baf-bbf4-3206bd0fb72a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T13:46:43.489232Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T13:46:43.488954Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T13:46:43.493567Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T13:46:43.493113Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T13:46:43.489213Z&quot;}}" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>numchunks <span class="op">=</span> <span class="dv">1</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> ds.PSurf.data.numblocks:</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    numchunks <span class="op">*=</span> n</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>numchunks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>1419431</code></pre>
+</div>
+</div>
+<p>That number matches the number in the dask array representation.</p>
+<div id="6e7f5ee8-9b40-42e5-9b4b-fa480b360bc5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T13:46:44.786729Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T13:46:44.786489Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T13:46:44.791309Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T13:46:44.790682Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T13:46:44.786712Z&quot;}}" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ds.PSurf.data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>4.65 TiB</td>
+<td>3.43 MiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(8399, 6500, 11700)</td>
+<td>(1, 500, 900)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">1419431 chunks in 2 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float64 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><svg width="230" height="167" style="stroke:rgb(0,0,0);stroke-width:1">
+<!-- Horizontal lines --> <line x1="10" y1="0" x2="60" y2="50" style="stroke-width:2"></line> <line x1="10" y1="5" x2="60" y2="55"></line> <line x1="10" y1="10" x2="60" y2="60"></line> <line x1="10" y1="15" x2="60" y2="66"></line> <line x1="10" y1="20" x2="60" y2="71"></line> <line x1="10" y1="25" x2="60" y2="76"></line> <line x1="10" y1="30" x2="60" y2="81"></line> <line x1="10" y1="35" x2="60" y2="86"></line> <line x1="10" y1="41" x2="60" y2="91"></line> <line x1="10" y1="46" x2="60" y2="96"></line> <line x1="10" y1="51" x2="60" y2="101"></line> <line x1="10" y1="56" x2="60" y2="107"></line> <line x1="10" y1="61" x2="60" y2="112"></line> <line x1="10" y1="66" x2="60" y2="117" style="stroke-width:2"></line> <!-- Vertical lines --> <line x1="10" y1="0" x2="10" y2="66" style="stroke-width:2"></line> <line x1="12" y1="2" x2="12" y2="69"></line> <line x1="15" y1="5" x2="15" y2="72"></line> <line x1="18" y1="8" x2="18" y2="74"></line> <line x1="20" y1="10" x2="20" y2="77"></line> <line x1="23" y1="13" x2="23" y2="80"></line> <line x1="26" y1="16" x2="26" y2="82"></line> <line x1="28" y1="18" x2="28" y2="85"></line> <line x1="31" y1="21" x2="31" y2="88"></line> <line x1="34" y1="24" x2="34" y2="90"></line> <line x1="36" y1="26" x2="36" y2="93"></line> <line x1="39" y1="29" x2="39" y2="96"></line> <line x1="42" y1="32" x2="42" y2="98"></line> <line x1="44" y1="34" x2="44" y2="101"></line> <line x1="47" y1="37" x2="47" y2="104"></line> <line x1="50" y1="40" x2="50" y2="106"></line> <line x1="52" y1="42" x2="52" y2="109"></line> <line x1="55" y1="45" x2="55" y2="112"></line> <line x1="58" y1="48" x2="58" y2="114"></line> <line x1="60" y1="50" x2="60" y2="117" style="stroke-width:2"></line> <!-- Colored Rectangle --> <polygon points="10.0,0.0 60.672699849170435,50.672699849170435 60.672699849170435,117.3393665158371 10.0,66.66666666666667" style="fill:#8B4903A0;stroke-width:0"></polygon> <!-- Horizontal lines --> <line x1="10" y1="0" x2="130" y2="0" style="stroke-width:2"></line> <line x1="12" y1="2" x2="132" y2="2"></line> <line x1="15" y1="5" x2="135" y2="5"></line> <line x1="18" y1="8" x2="138" y2="8"></line> <line x1="20" y1="10" x2="140" y2="10"></line> <line x1="23" y1="13" x2="143" y2="13"></line> <line x1="26" y1="16" x2="146" y2="16"></line> <line x1="28" y1="18" x2="148" y2="18"></line> <line x1="31" y1="21" x2="151" y2="21"></line> <line x1="34" y1="24" x2="154" y2="24"></line> <line x1="36" y1="26" x2="156" y2="26"></line> <line x1="39" y1="29" x2="159" y2="29"></line> <line x1="42" y1="32" x2="162" y2="32"></line> <line x1="44" y1="34" x2="164" y2="34"></line> <line x1="47" y1="37" x2="167" y2="37"></line> <line x1="50" y1="40" x2="170" y2="40"></line> <line x1="52" y1="42" x2="172" y2="42"></line> <line x1="55" y1="45" x2="175" y2="45"></line> <line x1="58" y1="48" x2="178" y2="48"></line> <line x1="60" y1="50" x2="180" y2="50" style="stroke-width:2"></line> <!-- Vertical lines --> <line x1="10" y1="0" x2="60" y2="50" style="stroke-width:2"></line> <line x1="19" y1="0" x2="69" y2="50"></line> <line x1="28" y1="0" x2="79" y2="50"></line> <line x1="37" y1="0" x2="88" y2="50"></line> <line x1="46" y1="0" x2="97" y2="50"></line> <line x1="56" y1="0" x2="106" y2="50"></line> <line x1="65" y1="0" x2="116" y2="50"></line> <line x1="74" y1="0" x2="125" y2="50"></line> <line x1="83" y1="0" x2="134" y2="50"></line> <line x1="93" y1="0" x2="143" y2="50"></line> <line x1="102" y1="0" x2="152" y2="50"></line> <line x1="111" y1="0" x2="162" y2="50"></line> <line x1="120" y1="0" x2="171" y2="50"></line> <line x1="130" y1="0" x2="180" y2="50" style="stroke-width:2"></line> <!-- Colored Rectangle --> <polygon points="10.0,0.0 130.0,0.0 180.67269984917044,50.672699849170435 60.672699849170435,50.672699849170435" style="fill:#8B4903A0;stroke-width:0"></polygon> <!-- Horizontal lines --> <line x1="60" y1="50" x2="180" y2="50" style="stroke-width:2"></line> <line x1="60" y1="55" x2="180" y2="55"></line> <line x1="60" y1="60" x2="180" y2="60"></line> <line x1="60" y1="66" x2="180" y2="66"></line> <line x1="60" y1="71" x2="180" y2="71"></line> <line x1="60" y1="76" x2="180" y2="76"></line> <line x1="60" y1="81" x2="180" y2="81"></line> <line x1="60" y1="86" x2="180" y2="86"></line> <line x1="60" y1="91" x2="180" y2="91"></line> <line x1="60" y1="96" x2="180" y2="96"></line> <line x1="60" y1="101" x2="180" y2="101"></line> <line x1="60" y1="107" x2="180" y2="107"></line> <line x1="60" y1="112" x2="180" y2="112"></line> <line x1="60" y1="117" x2="180" y2="117" style="stroke-width:2"></line> <!-- Vertical lines --> <line x1="60" y1="50" x2="60" y2="117" style="stroke-width:2"></line> <line x1="69" y1="50" x2="69" y2="117"></line> <line x1="79" y1="50" x2="79" y2="117"></line> <line x1="88" y1="50" x2="88" y2="117"></line> <line x1="97" y1="50" x2="97" y2="117"></line> <line x1="106" y1="50" x2="106" y2="117"></line> <line x1="116" y1="50" x2="116" y2="117"></line> <line x1="125" y1="50" x2="125" y2="117"></line> <line x1="134" y1="50" x2="134" y2="117"></line> <line x1="143" y1="50" x2="143" y2="117"></line> <line x1="152" y1="50" x2="152" y2="117"></line> <line x1="162" y1="50" x2="162" y2="117"></line> <line x1="171" y1="50" x2="171" y2="117"></line> <line x1="180" y1="50" x2="180" y2="117" style="stroke-width:2"></line> <!-- Colored Rectangle --> <polygon points="60.672699849170435,50.672699849170435 180.67269984917044,50.672699849170435 180.67269984917044,117.3393665158371 60.672699849170435,117.3393665158371" style="fill:#ECB172A0;stroke-width:0"></polygon> <!-- Text --> <text x="120.672700" y="137.339367" font-size="1.0rem" font-weight="100" text-anchor="middle">11700</text> <text x="200.672700" y="84.006033" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,200.672700,84.006033)">6500</text> <text x="25.336350" y="112.003017" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,25.336350,112.003017)">8399</text>
+</svg></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>But we can’t really know what the flat list of <code>chunk_locations</code> means in the context of that chunk grid. What does this mean?</p>
+<div id="0a7e6b59-229f-4844-83f8-76f95c0d3532" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T13:26:49.953931Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T13:26:49.953561Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T13:26:49.957226Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T13:26:49.956925Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T13:26:49.953902Z&quot;}}" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>chunk_locations[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>'s3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010101.030.beta.nc'</code></pre>
+</div>
+</div>
+<p>Ok so you can’t really get that information out of icechunk right now as far as I can tell. So what about the other piece.</p>
+<p>First let’s take a slice of the array that represents just one point in time. As long as all the variables have the same shape it shouldn’t matter which one you pick.</p>
+<div id="fea2b74a-8476-4bb3-ab0f-1966152d9a30" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:40:16.447046Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:40:16.446490Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:40:16.456064Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:40:16.455306Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:40:16.446999Z&quot;}}" data-execution_count="135">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ds.PSurf.data[<span class="dv">0</span>, :, :]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="135">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>580.22 MiB</td>
+<td>3.43 MiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(6500, 11700)</td>
+<td>(500, 900)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">169 chunks in 3 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float64 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><svg width="170" height="116" style="stroke:rgb(0,0,0);stroke-width:1">
+<!-- Horizontal lines --> <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2"></line> <line x1="0" y1="5" x2="120" y2="5"></line> <line x1="0" y1="10" x2="120" y2="10"></line> <line x1="0" y1="15" x2="120" y2="15"></line> <line x1="0" y1="20" x2="120" y2="20"></line> <line x1="0" y1="25" x2="120" y2="25"></line> <line x1="0" y1="30" x2="120" y2="30"></line> <line x1="0" y1="35" x2="120" y2="35"></line> <line x1="0" y1="41" x2="120" y2="41"></line> <line x1="0" y1="46" x2="120" y2="46"></line> <line x1="0" y1="51" x2="120" y2="51"></line> <line x1="0" y1="56" x2="120" y2="56"></line> <line x1="0" y1="61" x2="120" y2="61"></line> <line x1="0" y1="66" x2="120" y2="66" style="stroke-width:2"></line> <!-- Vertical lines --> <line x1="0" y1="0" x2="0" y2="66" style="stroke-width:2"></line> <line x1="9" y1="0" x2="9" y2="66"></line> <line x1="18" y1="0" x2="18" y2="66"></line> <line x1="27" y1="0" x2="27" y2="66"></line> <line x1="36" y1="0" x2="36" y2="66"></line> <line x1="46" y1="0" x2="46" y2="66"></line> <line x1="55" y1="0" x2="55" y2="66"></line> <line x1="64" y1="0" x2="64" y2="66"></line> <line x1="73" y1="0" x2="73" y2="66"></line> <line x1="83" y1="0" x2="83" y2="66"></line> <line x1="92" y1="0" x2="92" y2="66"></line> <line x1="101" y1="0" x2="101" y2="66"></line> <line x1="110" y1="0" x2="110" y2="66"></line> <line x1="120" y1="0" x2="120" y2="66" style="stroke-width:2"></line> <!-- Colored Rectangle --> <polygon points="0.0,0.0 120.0,0.0 120.0,66.66666666666667 0.0,66.66666666666667" style="fill:#ECB172A0;stroke-width:0"></polygon> <!-- Text --> <text x="60.000000" y="86.666667" font-size="1.0rem" font-weight="100" text-anchor="middle">11700</text> <text x="140.000000" y="33.333333" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,140.000000,33.333333)">6500</text>
+</svg></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="dbd48a92-f053-45f2-8646-a04804d90b99" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:39:23.125480Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:39:23.125164Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:39:23.130819Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:39:23.130122Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:39:23.125458Z&quot;}}" data-execution_count="132">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>lat_chunk_indices <span class="op">=</span> np.insert(np.array(a.chunks[<span class="dv">0</span>]).cumsum() <span class="op">-</span> <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>lat_chunk_bounds <span class="op">=</span> ds.lat.data[lat_chunk_indices]</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>lat_chunk_bounds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="132">
+<pre><code>array([ 7.00500011, 11.99499989, 16.99499893, 21.99499893, 26.99499893,
+       31.99499893, 36.99499893, 41.99499893, 46.99499893, 51.99499893,
+       56.99499893, 61.99499893, 66.99499512, 71.99499512])</code></pre>
+</div>
+</div>
+<div id="db55ca47-9559-4fe4-83eb-f254478c51bb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:39:57.734751Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:39:57.734221Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:39:57.744929Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:39:57.743415Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:39:57.734712Z&quot;}}" data-execution_count="134">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>lon_chunk_indices <span class="op">=</span> np.insert(np.array(a.chunks[<span class="dv">1</span>]).cumsum() <span class="op">-</span> <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>lon_chunk_bounds <span class="op">=</span> ds.lon.data[lon_chunk_indices]</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>lon_chunk_bounds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="134">
+<pre><code>array([-168.99499512, -160.00498962, -151.00498962, -142.00498962,
+       -133.00500488, -124.00499725, -115.00499725, -106.00499725,
+        -97.00499725,  -88.00499725,  -79.00499725,  -70.00499725,
+        -61.00499725,  -52.00499725])</code></pre>
+</div>
+</div>
+<p>So those are the min and max of each chunk. We can construct the bounding box for each chunk by stepping along the lats and lons and taking two items at a time. We’ll start with an array of zeros that has the same shape as the chunk grid except the last dimension is size 4 so that it can contain the bboxes.</p>
+<div id="26e76681-b47f-4a3c-bd76-6fb3ef845ece" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:46:54.205125Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:46:54.204883Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:46:54.211709Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:46:54.210589Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:46:54.205110Z&quot;}}" data-execution_count="152">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ds.PSurf.dims</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="152">
+<pre><code>('time', 'lat', 'lon')</code></pre>
+</div>
+</div>
+<div id="46c5004a-8b1e-4b4e-9c10-6b2f49d0f153" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:52:14.908504Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:52:14.908287Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:52:14.912223Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:52:14.911610Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:52:14.908488Z&quot;}}" data-execution_count="157">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bboxes <span class="op">=</span> np.zeros((a.numblocks[<span class="dv">0</span>], a.numblocks[<span class="dv">1</span>], <span class="dv">4</span>))</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(a.numblocks[<span class="dv">0</span>]):</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> m <span class="kw">in</span> <span class="bu">range</span>(a.numblocks[<span class="dv">1</span>]):</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>        bboxes[n, m] <span class="op">=</span> [lon_chunk_bounds[m], lat_chunk_bounds[n], lon_chunk_bounds[m <span class="op">+</span> <span class="dv">1</span>], lat_chunk_bounds[n <span class="op">+</span> <span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="085bb52c-8bc0-4540-99cb-05be0972d8b5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:54:04.965066Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:54:04.964586Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:54:04.972809Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:54:04.971804Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:54:04.965024Z&quot;}}" data-execution_count="161">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>bboxes[<span class="dv">0</span>, <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="161">
+<pre><code>array([-168.99499512,    7.00500011, -160.00498962,   11.99499989])</code></pre>
+</div>
+</div>
+<p>In practice we probably don’t need the bounding boxes for each chunk. We just need the bounding boxes for the legacy files which we can assume contain contiguous chunks.</p>
+<div id="918f634c-7e58-46f7-87ba-0267357bbb24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:53:43.512683Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:53:43.512261Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:53:43.528445Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:53:43.527941Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:53:43.512649Z&quot;}}" data-execution_count="160">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ds.rio.bounds()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="160">
+<pre><code>(-168.9999951170962, 7.000000114825381, -51.99999725350927, 71.99999511680303)</code></pre>
+</div>
+</div>
+<section id="create-stac-items" class="level2">
+<h2 class="anchored" data-anchor-id="create-stac-items">Create STAC items</h2>
+<p>In order to construct a STAC Item for each of these legacy files we need to have the have the temporal and spatial bounds for each file. Unlike the STAC Collection we want the metadata in these to be pretty minimal.</p>
+<p>Just as a quick note we are using <code>pystac</code> here for construction and using <code>rustac</code> for reading/writing to stac-geoparquet.</p>
+<div id="34958152-456b-4586-a2bc-c01f8d1aa3f8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:34.319227Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:34.319010Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:34.325123Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:34.324615Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:34.319214Z&quot;}}" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pystac</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rustac</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>First we will read in the collection that we had created in the previous notebook:</p>
+<div id="dfebfd31-b54e-424f-838b-4f38fd34b753" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:36.395842Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:36.395463Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:36.409770Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:36.409049Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:36.395815Z&quot;}}" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>collection <span class="op">=</span> pystac.Collection.from_file(<span class="st">"./collection.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’ll use some hard-coded values that are pulled straight from the <code>xr.Dataset</code>. For instance we know that the bounding box for each of these netcdf file is exactly the same they just each represent a different timestep.</p>
+<div id="5817fabb-5c72-40a6-95de-89736a3386a4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:44:47.328231Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:44:47.327323Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:44:47.345503Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:44:47.345003Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:44:47.328184Z&quot;}}" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> box</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely <span class="im">import</span> to_geojson</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>bbox <span class="op">=</span> ds.rio.bounds()</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>bbox <span class="op">=</span> <span class="bu">tuple</span>(<span class="bu">round</span>(b, <span class="dv">4</span>) <span class="cf">for</span> b <span class="kw">in</span> bbox)  <span class="co"># it might be wrong to round this, but it looked sooo close to round.</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>bbox_polygon <span class="op">=</span> box(<span class="op">*</span>bbox)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>begin_time <span class="op">=</span> ds.time.begin_time</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>end_time <span class="op">=</span> ds.time.end_time</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The item-specific values we will deduce from the filename for now, but ideally we would get this information in a more systematic way from the chunk information. Let’s take a look at those legacy filepaths again:</p>
+<div id="4a42d27c-a342-4361-a706-3e8ac1b8aca3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:44.102672Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:44.102084Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:44.106279Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:44.105793Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:44.102651Z&quot;}}" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>legacy_files[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>'s3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010101.030.beta.nc'</code></pre>
+</div>
+</div>
+<p>So - and this is kind of hacky - we can see that the whole date is actually encoded in the filepath. We just need to grab it out of there and parse it. Let’s create a function that creates an item that basically just has the spatial and temporal extents set and points to one particular legacy file on s3.</p>
+<div id="b032d0df-000b-40ed-894b-e491ab610941" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:27.045934Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:27.045759Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:27.049865Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:27.049391Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:27.045921Z&quot;}}" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_item(legacy_filepath):</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    filename <span class="op">=</span> legacy_filepath.split(<span class="st">"/"</span>)[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    date <span class="op">=</span> filename.split(<span class="st">".030.beta."</span>)[<span class="dv">0</span>][<span class="op">-</span><span class="dv">8</span>:]</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    datetime <span class="op">=</span> dt.datetime.strptime(date, <span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">"</span>)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    start_datetime <span class="op">=</span> dt.datetime.strptime(<span class="ss">f"</span><span class="sc">{</span>date<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>begin_time<span class="sc">}</span><span class="ss">"</span>, <span class="st">"%Y%m</span><span class="sc">%d</span><span class="st"> %H%M%S"</span>)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    end_datetime <span class="op">=</span> dt.datetime.strptime(<span class="ss">f"</span><span class="sc">{</span>date<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>end_time<span class="sc">}</span><span class="ss">"</span>, <span class="st">"%Y%m</span><span class="sc">%d</span><span class="st"> %H%M%S"</span>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pystac.Item(</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>        filename,</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>        geometry<span class="op">=</span>json.loads(to_geojson(bbox_polygon)),</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>        properties<span class="op">=</span>{</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">"storage:schemes"</span>: collection.extra_fields[<span class="st">"storage:schemes"</span>]</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>        bbox<span class="op">=</span>bbox,</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>        datetime<span class="op">=</span>datetime,</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>        start_datetime<span class="op">=</span>start_datetime,</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>        end_datetime<span class="op">=</span>end_datetime,</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>        collection<span class="op">=</span>collection,</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>        stac_extensions<span class="op">=</span>[</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">"https://stac-extensions.github.io/storage/v2.0.0/schema.json"</span>,</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>        ],</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>        assets<span class="op">=</span>{</span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>            <span class="st">"data"</span>: pystac.Asset(</span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>                href<span class="op">=</span>legacy_filepath,</span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>                media_type<span class="op">=</span><span class="st">"application/x-netcdf"</span>,</span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>                roles<span class="op">=</span>[<span class="st">"data"</span>],</span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>                extra_fields<span class="op">=</span>{</span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"storage:refs"</span>: [</span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"aws-s3-nasa-waterinsight"</span></span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>                    ],</span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’ll run it on one file to make sure it works and see how long it takes.</p>
+<div id="07591a22-eeab-493b-adc1-3aa6d4601b41" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:28.222671Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:28.222477Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:28.410804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:28.410235Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:28.222658Z&quot;}}" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>item <span class="op">=</span> create_item(legacy_files[<span class="dv">0</span>])</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>item</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 722 μs, sys: 0 ns, total: 722 μs
+Wall time: 726 μs</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+
+
+<style>
+.pystac-summary {
+    cursor: pointer;
+    display: list-item;
+    list-style: revert;
+    margin-bottom: 0 !important;
+
+    .pystac-l {
+        padding-left: 0.5em;
+        color: rgb(64, 128, 128);
+        font-style: italic;
+    }
+}
+.pystac-row {
+    overflow-wrap: break-word;
+    padding-left: .825em;
+
+    .pystac-k {
+        display: inline-block;
+        margin: 0px 0.5em 0px 0px;
+    }
+    .pystac-v {
+        color: rgb(186, 33, 33);
+    }
+}
+.pystac-k {
+    color: rgb(0, 128, 0);
+    font-weight: 700;
+}
+</style>
+<div class="jp-RenderedJSON jp-mod-trusted jp-OutputArea-output">
+    <div class="container" style="line-height: normal;">
+        <ul style="padding: 0px; margin: 0px; list-style: none; display: block;">
+            
+                
+                    
+        <li class="pystac-row">
+            <span class="pystac-k">type</span>
+            <span class="pystac-v">"Feature"</span>
+        </li>
+    
+                
+            
+                
+                    
+        <li class="pystac-row">
+            <span class="pystac-k">stac_version</span>
+            <span class="pystac-v">"1.1.0"</span>
+        </li>
+    
+                
+            
+                
+                    <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">stac_extensions</span><span class="pystac-l">[] 1 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">"https://stac-extensions.github.io/storage/v2.0.0/schema.json"</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+                
+            
+                
+                    
+        <li class="pystac-row">
+            <span class="pystac-k">id</span>
+            <span class="pystac-v">"NLDAS_FOR0010_D.A20010101.030.beta.nc"</span>
+        </li>
+    
+                
+            
+                
+                    
+        <li><details>
+            <summary class="pystac-summary"><span class="pystac-k">geometry</span></summary>
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">type</span>
+            <span class="pystac-v">"Polygon"</span>
+        </li>
+    
+            
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">coordinates</span><span class="pystac-l">[] 1 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">0</span><span class="pystac-l">[] 5 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">0</span><span class="pystac-l">[] 2 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">-52.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">1</span>
+            <span class="pystac-v">7.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">1</span><span class="pystac-l">[] 2 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">-52.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">1</span>
+            <span class="pystac-v">72.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">2</span><span class="pystac-l">[] 2 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">-169.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">1</span>
+            <span class="pystac-v">72.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">3</span><span class="pystac-l">[] 2 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">-169.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">1</span>
+            <span class="pystac-v">7.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">4</span><span class="pystac-l">[] 2 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">-52.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">1</span>
+            <span class="pystac-v">7.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+    </ul>
+        </details></li>
+    
+                
+            
+                
+                    <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">bbox</span><span class="pystac-l">[] 4 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">-169.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">1</span>
+            <span class="pystac-v">7.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">2</span>
+            <span class="pystac-v">-52.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">3</span>
+            <span class="pystac-v">72.0</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+                
+            
+                
+                    
+        <li><details>
+            <summary class="pystac-summary"><span class="pystac-k">properties</span></summary>
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li><details>
+            <summary class="pystac-summary"><span class="pystac-k">storage:schemes</span></summary>
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li><details>
+            <summary class="pystac-summary"><span class="pystac-k">aws-s3-nasa-waterinsight</span></summary>
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">type</span>
+            <span class="pystac-v">"aws-s3"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">platform</span>
+            <span class="pystac-v">"https://{bucket}.s3.{region}.amazonaws.com"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">bucket</span>
+            <span class="pystac-v">"nasa-waterinsight"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">region</span>
+            <span class="pystac-v">"us-west-2"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">anonymous</span>
+            <span class="pystac-v">True</span>
+        </li>
+    
+            
+        
+    </ul>
+        </details></li>
+    
+            
+        
+    </ul>
+        </details></li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">start_datetime</span>
+            <span class="pystac-v">"2001-01-01T00:00:00Z"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">end_datetime</span>
+            <span class="pystac-v">"2001-01-01T23:59:59Z"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">datetime</span>
+            <span class="pystac-v">"2001-01-01T00:00:00Z"</span>
+        </li>
+    
+            
+        
+    </ul>
+        </details></li>
+    
+                
+            
+                
+                    <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">links</span><span class="pystac-l">[] 1 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li><details>
+            <summary class="pystac-summary"><span class="pystac-k">0</span></summary>
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">rel</span>
+            <span class="pystac-v">"collection"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">href</span>
+            <span class="pystac-v">"/home/jsignell/NASA/dse-virtual-zarr-workshop/docs/examples/collection.json"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">type</span>
+            <span class="pystac-v">"application/json"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">title</span>
+            <span class="pystac-v">"NLDAS Forcing Data L4 Daily 0.01 x 0.01 degree V3.0 - *BETA*"</span>
+        </li>
+    
+            
+        
+    </ul>
+        </details></li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+                
+            
+                
+                    
+        <li><details>
+            <summary class="pystac-summary"><span class="pystac-k">assets</span></summary>
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li><details>
+            <summary class="pystac-summary"><span class="pystac-k">data</span></summary>
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">href</span>
+            <span class="pystac-v">"s3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010101.030.beta.nc"</span>
+        </li>
+    
+            
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">type</span>
+            <span class="pystac-v">"application/x-netcdf"</span>
+        </li>
+    
+            
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">storage:refs</span><span class="pystac-l">[] 1 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">"aws-s3-nasa-waterinsight"</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+            
+                <li><details>
+        <summary class="pystac-summary"><span class="pystac-k">roles</span><span class="pystac-l">[] 1 items</span></summary>
+        
+            <ul style="margin: 0px; padding: 0px 0px 0px 1.75em; list-style: none; display: block;">
+        
+            
+                
+        <li class="pystac-row">
+            <span class="pystac-k">0</span>
+            <span class="pystac-v">"data"</span>
+        </li>
+    
+            
+        
+    </ul>
+        
+    </details></li>
+            
+        
+    </ul>
+        </details></li>
+    
+            
+        
+    </ul>
+        </details></li>
+    
+                
+            
+                
+                    
+        <li class="pystac-row">
+            <span class="pystac-k">collection</span>
+            <span class="pystac-v">"nldas-3"</span>
+        </li>
+    
+                
+            
+        </ul>
+    </div>
+</div>
+</div>
+</div>
+<p>Validate the item:</p>
+<div id="6f50a053-e771-46cf-beff-1eca4551bfa9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:31.145283Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:31.145045Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:31.552006Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:31.551323Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:31.145267Z&quot;}}" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>item.validate()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>['https://schemas.stacspec.org/v1.1.0/item-spec/json-schema/item.json',
+ 'https://stac-extensions.github.io/storage/v2.0.0/schema.json']</code></pre>
+</div>
+</div>
+<p>Now instead of just making one of these we’ll want to make a whole bunch (8399 to be exact) so instead of storing each as its own json blob I’ll save them as an item collection in stac-geoparquet.</p>
+<div id="5f849122-8192-4c33-a730-0684b11c0cc2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:44.167538Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:44.167249Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:44.755053Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:44.754443Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:44.167516Z&quot;}}" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>items <span class="op">=</span> [</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    create_item(legacy_file).to_dict(include_self_link<span class="op">=</span><span class="va">False</span>, transform_hrefs<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> legacy_file <span class="kw">in</span> legacy_files</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 579 ms, sys: 5.4 ms, total: 584 ms
+Wall time: 584 ms</code></pre>
+</div>
+</div>
+<div id="488564ca-6177-4395-bdd2-9306421f99a7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:45.602632Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:45.602458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:45.900007Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:45.899466Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:45.602620Z&quot;}}" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> rustac.write(<span class="st">"items.parquet"</span>, items)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<pre><code>{'e_tag': '2867791-63deba937e261-53b1f', 'version': None}</code></pre>
+</div>
+</div>
+<p>Read it back in just to prove that we can:</p>
+<div id="83d7de6a-29e2-4a24-8760-b62d9cfda874" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:48.024874Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:48.024475Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:48.262216Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:48.261725Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:48.024843Z&quot;}}" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>item_collection <span class="op">=</span> <span class="cf">await</span> rustac.read(<span class="st">"items.parquet"</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>item_collection[<span class="st">"features"</span>][<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<pre><code>{'type': 'Feature',
+ 'stac_version': '1.1.0',
+ 'stac_extensions': ['https://stac-extensions.github.io/storage/v2.0.0/schema.json'],
+ 'id': 'NLDAS_FOR0010_D.A20010101.030.beta.nc',
+ 'geometry': {'type': 'Polygon',
+  'coordinates': [[[-52.0, 7.0],
+    [-52.0, 72.0],
+    [-169.0, 72.0],
+    [-169.0, 7.0],
+    [-52.0, 7.0]]]},
+ 'bbox': (-169.0, 7.0, -52.0, 72.0),
+ 'properties': {'datetime': '2001-01-01T00:00:00Z',
+  'start_datetime': '2001-01-01T00:00:00Z',
+  'end_datetime': '2001-01-01T23:59:59Z',
+  'storage:schemes': {'aws-s3-nasa-waterinsight': {'type': 'aws-s3',
+    'platform': 'https://{bucket}.s3.{region}.amazonaws.com',
+    'bucket': 'nasa-waterinsight',
+    'region': 'us-west-2',
+    'anonymous': True}}},
+ 'links': [{'href': '/home/jsignell/NASA/dse-virtual-zarr-workshop/docs/examples/collection.json',
+   'rel': 'collection',
+   'type': 'application/json',
+   'title': 'NLDAS Forcing Data L4 Daily 0.01 x 0.01 degree V3.0 - *BETA*'}],
+ 'assets': {'data': {'href': 's3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010101.030.beta.nc',
+   'type': 'application/x-netcdf',
+   'roles': ['data'],
+   'storage:refs': ['aws-s3-nasa-waterinsight']}},
+ 'collection': 'nldas-3'}</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/NASA-IMPACT\.github\.io\/dse-virtual-zarr-workshop\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
