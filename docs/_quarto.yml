@@ -21,6 +21,10 @@ website:
             text: Walk through - NetCDFs on AWS
           - href: examples/02_ESGF_NetCDF_Solution.ipynb
             text: Hands on - NetCDFs from ESGF
+          - href: examples/03_STAC_Collection_for_Virtual_Icechunk_Store.ipynb
+            text: STAC collection for virtual store
+          - href: examples/04_STAC_Items_for_legacy_files_in_Virtual_Icechunk_Store.ipynb
+            text: STAC items for legacy files referenced by virtual store
 format:
 
   html:
