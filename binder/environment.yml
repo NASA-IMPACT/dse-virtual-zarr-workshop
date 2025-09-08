@@ -1,0 +1,36 @@
+name: base-env
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  # For development
+  - wget
+  - curl
+  - gcc
+  - make
+  - jupyter
+  - pip
+  - pipx
+  - uv
+  - pixi
+  - pre-commit
+  - pytest
+  - pytest-cov
+  - pytest-env
+  - pytest-xdist
+  - pytest-timeout
+  # For development on the Hub
+  - git
+  - gh
+  - code-server
+  - jupyter-resource-usage
+  - jupyter-vscode-proxy
+  - openssh
+  # For building the quarto book
+  - jupytext
+  - pip:
+    # For development on the Hub
+    - gh-scoped-creds
+    - jupyter-sshd-proxy
+    - jupyterlab-bxplorer
+

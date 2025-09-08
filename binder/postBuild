@@ -1,13 +1,7 @@
 #!/bin/bash
 
-set -ex
+set -e
 
-# Install Pixi
-wget -qO- https://pixi.sh/install.sh | sh
-export PATH="~/.pixi/bin:${PATH}"
-
-# Export workspace to conda explicit spec
-pixi workspace export conda-explicit-spec --platform linux-64 binder/
-
-# Install environment
-mamba install --name notebook --file binder/default_linux-64_conda_spec.txt
+git clone https://github.com/NASA-IMPACT/dse-virtual-zarr-workshop.git ~/workshops/ds-virtual-zarr-workshop
+cd ~/workshops/ds-virtual-zarr-workshop
+pixi install
