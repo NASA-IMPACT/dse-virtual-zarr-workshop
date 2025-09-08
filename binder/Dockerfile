@@ -28,8 +28,3 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
 
 USER ${NB_UID}
 
-RUN git clone https://github.com/NASA-IMPACT/dse-virtual-zarr-workshop.git /home/${NB_USER}/dse-virtual-zarr-workshop
-
-WORKDIR /home/${NB_USER}/dse-virtual-zarr-workshop
-
-RUN pixi install
