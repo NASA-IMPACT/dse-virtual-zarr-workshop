@@ -5,7 +5,7 @@ RUN echo ${NB_UID}
 
 # Add conda packages
 USER root
-RUN curl -fsSL https://pixi.sh/install.sh | sh
+RUN wget -qO- https://pixi.sh/install.sh | sh
 ENV PATH="/root/.pixi/bin:$PATH"
 
 USER ${NB_UID}
