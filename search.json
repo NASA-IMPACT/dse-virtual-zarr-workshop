@@ -1,0 +1,54 @@
+[
+  {
+    "objectID": "examples/01_AWS_Public_Data_Program_NetCDF.html",
+    "href": "examples/01_AWS_Public_Data_Program_NetCDF.html",
+    "title": "Walk-through - Virtualizing NetCDFs from Amazon’s Open Data Program",
+    "section": "",
+    "text": "Let’s start with the first example from the VirtualiZarr homepage.\nThis example uses the NASA Earth Exchange Global Daily Downscaled Projections (NEX-GDDP-CMIP6) from the Registry of Open Data on AWS. The virtualization process will be much faster if run proximal to the data in AWS’s us-west-2 region.\nCreating the virtual dataset looks quite similar to how we normally open data with xarray, but there are a few notable differences that are shown through this example.\nFirst, import the necessary functions and classes:\n\nimport icechunk\nimport obstore\nfrom virtualizarr import open_virtual_dataset, open_virtual_mfdataset\nfrom virtualizarr.parsers import HDFParser\nfrom virtualizarr.registry import ObjectStoreRegistry\n\nZarr can emit a lot of warnings about Numcodecs not being including in the Zarr version 3 specification yet – let’s suppress those.\n\nimport warnings\n\nwarnings.filterwarnings(\n    \"ignore\",\n    message=\"Numcodecs codecs are not in the Zarr version 3 specification*\",\n    category=UserWarning,\n)\n\nWe can use Obstore’s obstore.store.from_url convenience method to create an ObjectStore that can fetch data from the specified URLs.\n\nbucket = \"s3://nex-gddp-cmip6\"\npath = \"NEX-GDDP-CMIP6/ACCESS-CM2/ssp126/r1i1p1f1/tasmax/tasmax_day_ACCESS-CM2_ssp126_r1i1p1f1_gn_2015_v2.0.nc\"\nstore = obstore.store.from_url(bucket, region=\"us-west-2\", skip_signature=True)\n\nWe also need to create an ObjectStoreRegistry that maps the URL structure to the ObjectStore.\n\nregistry = ObjectStoreRegistry({bucket: store})\n\nNow, let’s create a parser instance and create a virtual dataset by passing the URL, parser, and registry to virtualizarr.open_virtual_dataset.\n\nparser = HDFParser()\nvds = open_virtual_dataset(\n    url=f\"{bucket}/{path}\",\n    parser=parser,\n    registry=registry,\n    loadable_variables=[],\n)\nprint(vds)\n\nSince we specified loadable_variables=[], no data has been loaded or copied in this process. We have merely created an in-memory lookup table that points to the location of chunks in the original netCDF when data is needed later on. The default behavior (loadable_variables=None) will load data associated with coordinates but not data variables. The size represents the size of the original dataset - you can see the size of the virtual dataset using the vz accessor:\n\nprint(f\"Original dataset size: {vds.nbytes} bytes\")\nprint(f\"Virtual dataset size: {vds.vz.nbytes} bytes\")\n\nVirtualiZarr’s other top-level function is virtualizarr.open_virtual_mfdataset, which can open and virtualize multiple data sources into a single virtual dataset, similar to how xarray.open_mfdataset opens multiple data files as a single dataset.\n\nurls = [\n    f\"s3://nex-gddp-cmip6/NEX-GDDP-CMIP6/ACCESS-CM2/ssp126/r1i1p1f1/tasmax/tasmax_day_ACCESS-CM2_ssp126_r1i1p1f1_gn_{year}_v2.0.nc\"\n    for year in range(2015, 2017)\n]\nvds = open_virtual_mfdataset(urls, parser=parser, registry=registry)\nprint(vds)\n\nThe magic of VirtualiZarr is that you can persist the virtual dataset to disk in a chunk references format such as Icechunk, meaning that the work of constructing the single coherent dataset only needs to happen once. For subsequent data access, you can use xarray.open_zarr to open that Icechunk store, which on object storage is far faster than using xarray.open_mfdataset to open the the original non-cloud-optimized files.\nLet’s persist the Virtual dataset using Icechunk. Here we store the dataset in a memory store but in most cases you’ll store the virtual dataset in the cloud.\n\nicechunk_store = icechunk.in_memory_storage()\nrepo = icechunk.Repository.create(icechunk_store)\nsession = repo.writable_session(\"main\")\nvds.vz.to_icechunk(session.store)\nsession.commit(\"Create virtual store\")",
+    "crumbs": [
+      "Examples",
+      "Walk through - NetCDFs on AWS"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "VirtualiZarr examples",
+    "section": "",
+    "text": "This workshop will include a mostly self-guided exploration of VirtualiZarr 2.0 for either pre-constructed examples or your own data.\nYou can find out more about VirtualiZarr on readthedocs and explore the source code on GitHub. If you’re familiar with VirtualiZarr 1.0, check out the migration guide for information about how this new release differs.\nYou can download the source code from GitHub:\ngit clone git@github.com:virtual-zarr/esip-2025.git\ncd esip-2025\nYou can use pixi to create an environment for these examples. After installing pixi, create an environment from the lock file via:\npixi install",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#overview",
+    "href": "index.html#overview",
+    "title": "VirtualiZarr examples",
+    "section": "",
+    "text": "This workshop will include a mostly self-guided exploration of VirtualiZarr 2.0 for either pre-constructed examples or your own data.\nYou can find out more about VirtualiZarr on readthedocs and explore the source code on GitHub. If you’re familiar with VirtualiZarr 1.0, check out the migration guide for information about how this new release differs.\nYou can download the source code from GitHub:\ngit clone git@github.com:virtual-zarr/esip-2025.git\ncd esip-2025\nYou can use pixi to create an environment for these examples. After installing pixi, create an environment from the lock file via:\npixi install",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "VirtualiZarr examples",
+    "section": "License",
+    "text": "License\nContent in this repository is licensed under the MIT License.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "examples/02_ESGF_NetCDF_Solution.html",
+    "href": "examples/02_ESGF_NetCDF_Solution.html",
+    "title": "Hands-on - Virtualize NetCDF from ESGF",
+    "section": "",
+    "text": "This example uses data from the Earth System Grid Federation THREDDS Data Server.\nThis is a quicker example for hands-on experience. For a full walkthrough, view previous example on the NASA-NEX-GDDP CMIP6 data.\nThank you to Raphael Hagen for contributing this example!\n\nStep 1: Import necessary functions and classes\n\nfrom obstore.store import HTTPStore\nfrom virtualizarr import open_virtual_dataset\nfrom virtualizarr.parsers import HDFParser\nfrom virtualizarr.registry import ObjectStoreRegistry\n\n\n\nStep 2: Define data location\n\nbucket = \"https://esgf-data.ucar.edu\"\npath = \"thredds/fileServer/esg_dataroot/CMIP6/CMIP/NCAR/CESM2/historical/r3i1p1f1/day/tas/gn/v20190308/tas_day_CESM2_historical_r3i1p1f1_gn_19200101-19291231.nc\"\n\n\n\nStep 3: Create an ObjectStore and an ObjectStoreRegistry\n\nstore = HTTPStore.from_url(bucket)\nregistry = ObjectStoreRegistry({bucket: store})\n\n\n\nStep 4: Create an instance of the HDFParser\n\nparser = HDFParser()\n\n\n\nStep 5: Create a virtual dataset via open_virtual_dataset\n\nvds = open_virtual_dataset(\n    url=f\"{bucket}/{path}\",\n    parser=parser,\n    registry=registry,\n    loadable_variables=[\"lat\", \"lon\", \"time\", \"time_bnds\", \"lat_bnds\", \"lon_bnds\"],\n)\n\n\nvds",
+    "crumbs": [
+      "Examples",
+      "Hands on - NetCDFs from ESGF"
+    ]
+  }
+]
