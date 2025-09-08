@@ -6,7 +6,7 @@ RUN echo ${NB_UID}
 # Add conda packages
 USER root
 RUN wget -qO- https://pixi.sh/install.sh | sh
-RUN source /home/${NB_USER}.bashrc
+RUN source /home/${NB_USER}/.bashrc
 
 USER ${NB_UID}
 
