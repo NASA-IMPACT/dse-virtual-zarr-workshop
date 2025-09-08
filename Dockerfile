@@ -6,7 +6,7 @@ RUN echo ${NB_UID}
 # Add conda packages
 USER root
 RUN wget -qO- https://pixi.sh/install.sh | sh
-RUN source /home/${NB_USER}/.bashrc
+ENV PATH="/root/.pixi/bin:$PATH"
 
 USER ${NB_UID}
 
@@ -15,11 +15,6 @@ COPY pixi.lock /tmp/pixi.lock
 
 # Install packages globally
 RUN pixi global install --from-lockfile /tmp/pixi.lock
-
-# Install quarto
-USER root
-RUN wget -q https://github.com/quarto-dev/quarto-cli/releases/download/v1.5.57/quarto-1.5.57-linux-amd64.deb
-RUN dpkg -i quarto-1.5.57-linux-amd64.deb
 
 USER ${NB_UID}
 
