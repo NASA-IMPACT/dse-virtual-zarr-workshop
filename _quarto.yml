@@ -10,7 +10,7 @@ website:
     title: "Virtual Zarr examples"
     tools:
       - icon: github
-        href: https://github.com/virtual-zarr/esip-2025
+        href: https://github.com/NASA-IMPACT/dse-virtual-zarr-workshop
         text: "Repo"
     contents:
       - href: index.qmd

@@ -13,8 +13,8 @@ You can find out more about VirtualiZarr on [readthedocs](https://virtualizarr.r
 You can download the source code from GitHub:
 
 ```bash
-git clone git@github.com:virtual-zarr/esip-2025.git
-cd esip-2025
+git clone git@github.com:NASA-IMPACT/dse-virtual-zarr-workshop.git
+cd dse-virtual-zarr-workshop
 ```
 
 You can use [pixi](https://pixi.sh/latest/) to create an environment for these examples. After installing pixi, create an environment from the
