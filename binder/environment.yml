@@ -22,6 +22,7 @@ dependencies:
   - shapely>=2.1.1,<3
   - rustac>=0.8.1,<0.9
   - h5netcdf=1.6.4
+  - matplotlib=3.10.6
   # For development
   - wget
   - curl
