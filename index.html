@@ -334,7 +334,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./examples/02_ESGF_NetCDF_Solution.html" class="sidebar-item-text sidebar-link">
+  <a href="./examples/02_ESGF_NetCDF_Solution.ipynb" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Hands on - NetCDFs from ESGF</span></a>
   </div>
 </li>
@@ -383,13 +383,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>This workshop will include a mostly self-guided exploration of VirtualiZarr 2.0 for either pre-constructed examples or your own data.</p>
+<p>This workshop will include an explanation and exploration of VirtualiZarr 2.0.</p>
 <p>You can find out more about VirtualiZarr on <a href="https://virtualizarr.readthedocs.io/en/stable/index.html">readthedocs</a> and explore the <a href="https://github.com/zarr-developers/VirtualiZarr">source code on GitHub</a>. If you’re familiar with VirtualiZarr 1.0, check out the <a href="https://virtualizarr.readthedocs.io/en/stable/migration_guide.html">migration guide</a> for information about how this new release differs.</p>
-<p>You can download the source code from GitHub:</p>
+<p>You can use the <a href="https://docs.openveda.cloud/user-guide/scientific-computing/">VEDA Hub</a> to run the examples in this demo:</p>
+<ul>
+<li>Navigate to <a href="https://hub.openveda.cloud/">https://hub.openveda.cloud/</a></li>
+<li>Scroll to build your own image in the “Environment” dropdown
+<ul>
+<li>Enter for “repository”: https://github.com/NASA-IMPACT/dse-virtual-zarr-workshop</li>
+<li>Enter for “Git Ref” (default): HEAD</li>
+<li>Click build image</li>
+</ul></li>
+<li>Start a VEDA Hub with the “Build your own image option”
+<ul>
+<li>Select Resource Allocation (Default): 1.9 GB RAM, up to 3.7 CPUs</li>
+<li>Click Start</li>
+</ul></li>
+<li>Download the source code from GitHub:</li>
+</ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@github.com:NASA-IMPACT/dse-virtual-zarr-workshop.git</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> dse-virtual-zarr-workshop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can use <a href="https://pixi.sh/latest/">pixi</a> to create an environment for these examples. After installing pixi, create an environment from the lock file via:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pixi</span> install</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="introductory-presentation" class="level2">
 <h2 class="anchored" data-anchor-id="introductory-presentation">Introductory presentation</h2>
