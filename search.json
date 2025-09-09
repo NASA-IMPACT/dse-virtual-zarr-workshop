@@ -59,7 +59,7 @@
     "href": "index.html",
     "title": "VirtualiZarr examples",
     "section": "",
-    "text": "This workshop will include a mostly self-guided exploration of VirtualiZarr 2.0 for either pre-constructed examples or your own data.\nYou can find out more about VirtualiZarr on readthedocs and explore the source code on GitHub. If you’re familiar with VirtualiZarr 1.0, check out the migration guide for information about how this new release differs.\nYou can download the source code from GitHub:\ngit clone git@github.com:virtual-zarr/esip-2025.git\ncd esip-2025\nYou can use pixi to create an environment for these examples. After installing pixi, create an environment from the lock file via:\npixi install",
+    "text": "This workshop will include a mostly self-guided exploration of VirtualiZarr 2.0 for either pre-constructed examples or your own data.\nYou can find out more about VirtualiZarr on readthedocs and explore the source code on GitHub. If you’re familiar with VirtualiZarr 1.0, check out the migration guide for information about how this new release differs.\nYou can download the source code from GitHub:\ngit clone git@github.com:NASA-IMPACT/dse-virtual-zarr-workshop.git\ncd dse-virtual-zarr-workshop\nYou can use pixi to create an environment for these examples. After installing pixi, create an environment from the lock file via:\npixi install",
     "crumbs": [
       "Home"
     ]
@@ -69,7 +69,7 @@
     "href": "index.html#overview",
     "title": "VirtualiZarr examples",
     "section": "",
-    "text": "This workshop will include a mostly self-guided exploration of VirtualiZarr 2.0 for either pre-constructed examples or your own data.\nYou can find out more about VirtualiZarr on readthedocs and explore the source code on GitHub. If you’re familiar with VirtualiZarr 1.0, check out the migration guide for information about how this new release differs.\nYou can download the source code from GitHub:\ngit clone git@github.com:virtual-zarr/esip-2025.git\ncd esip-2025\nYou can use pixi to create an environment for these examples. After installing pixi, create an environment from the lock file via:\npixi install",
+    "text": "This workshop will include a mostly self-guided exploration of VirtualiZarr 2.0 for either pre-constructed examples or your own data.\nYou can find out more about VirtualiZarr on readthedocs and explore the source code on GitHub. If you’re familiar with VirtualiZarr 1.0, check out the migration guide for information about how this new release differs.\nYou can download the source code from GitHub:\ngit clone git@github.com:NASA-IMPACT/dse-virtual-zarr-workshop.git\ncd dse-virtual-zarr-workshop\nYou can use pixi to create an environment for these examples. After installing pixi, create an environment from the lock file via:\npixi install",
     "crumbs": [
       "Home"
     ]
