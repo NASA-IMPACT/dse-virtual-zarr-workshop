@@ -100,8 +100,8 @@ docs/output/*
 
 .gitattributes
 
-docs/_site/
-docs/.quarto/
+_site/
+.quarto/
 
 .mypy_cache/
 .pytest_cache/
