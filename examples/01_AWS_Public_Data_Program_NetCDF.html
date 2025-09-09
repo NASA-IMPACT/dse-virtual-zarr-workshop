@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -106,6 +106,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -385,7 +388,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This example uses the <a href="https://registry.opendata.aws/nex-gddp-cmip6/">NASA Earth Exchange Global Daily Downscaled Projections</a> (NEX-GDDP-CMIP6) from the Registry of Open Data on AWS. The virtualization process will be much faster if run proximal to the data in AWS’s us-west-2 region.</p>
 <p>Creating the virtual dataset looks quite similar to how we normally open data with <a href="https://docs.xarray.dev/en/stable/index.html#module-xarray">xarray</a>, but there are a few notable differences that are shown through this example.</p>
 <p>First, import the necessary functions and classes:</p>
-<div id="440dfe73" class="cell">
+<div id="440dfe73" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> icechunk</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> obstore</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> virtualizarr <span class="im">import</span> open_virtual_dataset, open_virtual_mfdataset</span>
@@ -393,7 +396,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> virtualizarr.registry <span class="im">import</span> ObjectStoreRegistry</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Zarr can emit a lot of warnings about Numcodecs not being including in the Zarr version 3 specification yet – let’s suppress those.</p>
-<div id="c6f334fd" class="cell">
+<div id="c6f334fd" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(</span>
@@ -403,48 +406,683 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can use Obstore’s <a href="https://developmentseed.org/obstore/latest/api/store/#obstore.store.from_url"><code>obstore.store.from_url</code></a> convenience method to create an <a href="https://developmentseed.org/obstore/latest/api/store/#obstore.store.ObjectStore"><code>ObjectStore</code></a> that can fetch data from the specified URLs.</p>
-<div id="0351e260" class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bucket <span class="op">=</span> <span class="st">"s3://nex-gddp-cmip6"</span></span>
+<div id="0351e260" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bucket <span class="op">=</span> <span class="st">"s3://nex-gddp-cmip6/"</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> <span class="st">"NEX-GDDP-CMIP6/ACCESS-CM2/ssp126/r1i1p1f1/tasmax/tasmax_day_ACCESS-CM2_ssp126_r1i1p1f1_gn_2015_v2.0.nc"</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>store <span class="op">=</span> obstore.store.from_url(bucket, region<span class="op">=</span><span class="st">"us-west-2"</span>, skip_signature<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We also need to create an <a href="https://virtualizarr.readthedocs.io/en/stable/api/developer.html#virtualizarr.registry.ObjectStoreRegistry">ObjectStoreRegistry</a> that maps the URL structure to the ObjectStore.</p>
-<div id="8c76cdf4" class="cell">
+<div id="8c76cdf4" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>registry <span class="op">=</span> ObjectStoreRegistry({bucket: store})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, let’s create a parser instance and create a virtual dataset by passing the URL, parser, and registry to <a href="https://virtualizarr.readthedocs.io/en/stable/api/virtualizarr.html#virtualizarr.open_virtual_dataset"><code>virtualizarr.open_virtual_dataset</code></a>.</p>
-<div id="8f4325c3" class="cell">
+<div id="8f4325c3" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> HDFParser()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>vds <span class="op">=</span> open_virtual_dataset(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    url<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>bucket<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>path<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    url<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>bucket<span class="sc">}{</span>path<span class="sc">}</span><span class="ss">"</span>,</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    parser<span class="op">=</span>parser,</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    registry<span class="op">=</span>registry,</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    loadable_variables<span class="op">=</span>[],</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;xarray.Dataset&gt; Size: 1GB
+Dimensions:  (time: 365, lat: 600, lon: 1440)
+Coordinates:
+    time     (time) float64 3kB ManifestArray&lt;shape=(365,), dtype=float64, ch...
+    lat      (lat) float64 5kB ManifestArray&lt;shape=(600,), dtype=float64, chu...
+    lon      (lon) float64 12kB ManifestArray&lt;shape=(1440,), dtype=float64, c...
+Data variables:
+    tasmax   (time, lat, lon) float32 1GB ManifestArray&lt;shape=(365, 600, 1440...
+Attributes: (12/22)
+    cmip6_source_id:       ACCESS-CM2
+    cmip6_institution_id:  CSIRO-ARCCSS
+    cmip6_license:         CC-BY-SA 4.0
+    activity:              NEX-GDDP-CMIP6
+    Conventions:           CF-1.7
+    frequency:             day
+    ...                    ...
+    doi:                   https://doi.org/10.7917/OFSG3345
+    external_variables:    areacella
+    contact:               Dr. Bridget Thrasher: bridget@climateanalyticsgrou...
+    creation_date:         Sat Nov 16 13:31:18 PST 2024
+    disclaimer:            These data are considered provisional and subject ...
+    tracking_id:           d4b2123b-abf9-4c3c-a780-58df6ce4e67f</code></pre>
+</div>
 </div>
 <p>Since we specified <code>loadable_variables=[]</code>, no data has been loaded or copied in this process. We have merely created an in-memory lookup table that points to the location of chunks in the original netCDF when data is needed later on. The default behavior (<code>loadable_variables=None</code>) will load data associated with coordinates but not data variables. The size represents the size of the original dataset - you can see the size of the virtual dataset using the vz accessor:</p>
-<div id="6e76c705" class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Original dataset size: </span><span class="sc">{</span>vds<span class="sc">.</span>nbytes<span class="sc">}</span><span class="ss"> bytes"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Virtual dataset size: </span><span class="sc">{</span>vds<span class="sc">.</span>vz<span class="sc">.</span>nbytes<span class="sc">}</span><span class="ss"> bytes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="6e76c705" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Original dataset size: </span><span class="sc">{</span>vds<span class="sc">.</span>nbytes<span class="sc">}</span><span class="ss"> bytes"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Virtual dataset size: </span><span class="sc">{</span>vds<span class="sc">.</span>vz<span class="sc">.</span>nbytes<span class="sc">}</span><span class="ss"> bytes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Original dataset size: 1261459240 bytes
+Virtual dataset size: 11776 bytes</code></pre>
+</div>
 </div>
 <p>VirtualiZarr’s other top-level function is <a href="https://virtualizarr.readthedocs.io/en/stable/api/virtualizarr.html#virtualizarr.open_virtual_mfdataset"><code>virtualizarr.open_virtual_mfdataset</code></a>, which can open and virtualize multiple data sources into a single virtual dataset, similar to how <a href="https://docs.xarray.dev/en/stable/generated/xarray.open_mfdataset.html#xarray.open_mfdataset"><code>xarray.open_mfdataset</code></a> opens multiple data files as a single dataset.</p>
-<div id="d281c4ff" class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>urls <span class="op">=</span> [</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"s3://nex-gddp-cmip6/NEX-GDDP-CMIP6/ACCESS-CM2/ssp126/r1i1p1f1/tasmax/tasmax_day_ACCESS-CM2_ssp126_r1i1p1f1_gn_</span><span class="sc">{</span>year<span class="sc">}</span><span class="ss">_v2.0.nc"</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> year <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2015</span>, <span class="dv">2017</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>vds <span class="op">=</span> open_virtual_mfdataset(urls, parser<span class="op">=</span>parser, registry<span class="op">=</span>registry)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="d281c4ff" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>urls <span class="op">=</span> [</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"s3://nex-gddp-cmip6/NEX-GDDP-CMIP6/ACCESS-CM2/ssp126/r1i1p1f1/tasmax/tasmax_day_ACCESS-CM2_ssp126_r1i1p1f1_gn_</span><span class="sc">{</span>year<span class="sc">}</span><span class="ss">_v2.0.nc"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> year <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2015</span>, <span class="dv">2017</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>vds <span class="op">=</span> open_virtual_mfdataset(urls, parser<span class="op">=</span>parser, registry<span class="op">=</span>registry)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;xarray.Dataset&gt; Size: 3GB
+Dimensions:  (time: 731, lat: 600, lon: 1440)
+Coordinates:
+  * time     (time) datetime64[ns] 6kB 2015-01-01T12:00:00 ... 2016-12-31T12:...
+  * lat      (lat) float64 5kB -59.88 -59.62 -59.38 -59.12 ... 89.38 89.62 89.88
+  * lon      (lon) float64 12kB 0.125 0.375 0.625 0.875 ... 359.4 359.6 359.9
+Data variables:
+    tasmax   (time, lat, lon) float32 3GB ManifestArray&lt;shape=(731, 600, 1440...
+Attributes: (12/22)
+    cmip6_source_id:       ACCESS-CM2
+    cmip6_institution_id:  CSIRO-ARCCSS
+    cmip6_license:         CC-BY-SA 4.0
+    activity:              NEX-GDDP-CMIP6
+    Conventions:           CF-1.7
+    frequency:             day
+    ...                    ...
+    doi:                   https://doi.org/10.7917/OFSG3345
+    external_variables:    areacella
+    contact:               Dr. Bridget Thrasher: bridget@climateanalyticsgrou...
+    creation_date:         Sat Nov 16 13:31:18 PST 2024
+    disclaimer:            These data are considered provisional and subject ...
+    tracking_id:           d4b2123b-abf9-4c3c-a780-58df6ce4e67f</code></pre>
+</div>
 </div>
 <p>The magic of VirtualiZarr is that you can persist the virtual dataset to disk in a chunk references format such as Icechunk, meaning that the work of constructing the single coherent dataset only needs to happen once. For subsequent data access, you can use xarray.open_zarr to open that Icechunk store, which on object storage is far faster than using xarray.open_mfdataset to open the the original non-cloud-optimized files.</p>
 <p>Let’s persist the Virtual dataset using Icechunk. Here we store the dataset in a memory store but in most cases you’ll store the virtual dataset in the cloud.</p>
-<div id="b99c2c85" class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>icechunk_store <span class="op">=</span> icechunk.in_memory_storage()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>repo <span class="op">=</span> icechunk.Repository.create(icechunk_store)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>session <span class="op">=</span> repo.writable_session(<span class="st">"main"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>vds.vz.to_icechunk(session.store)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>session.commit(<span class="st">"Create virtual store"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="b99c2c85" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>icechunk_store <span class="op">=</span> icechunk.in_memory_storage()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> icechunk.RepositoryConfig.default()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>config.set_virtual_chunk_container(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    icechunk.VirtualChunkContainer(</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        url_prefix<span class="op">=</span>bucket,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        store<span class="op">=</span>icechunk.s3_store(region<span class="op">=</span><span class="st">"us-west-2"</span>, anonymous<span class="op">=</span><span class="va">True</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>virtual_credentials <span class="op">=</span> icechunk.containers_credentials(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    {bucket: icechunk.s3_anonymous_credentials()}</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>repo <span class="op">=</span> icechunk.Repository.create(</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    icechunk_store,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    config,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    authorize_virtual_chunk_access<span class="op">=</span>virtual_credentials,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>session <span class="op">=</span> repo.writable_session(<span class="st">"main"</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>vds.vz.to_icechunk(session.store)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>session.commit(<span class="st">"Create virtual store"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>'2ZRMJZYJ7MTB7XM6T0S0'</code></pre>
+</div>
+</div>
+<p>Always check your work when creating a new virtual dataset by comparing the virtual version to the native version</p>
+<div id="b6e165a1-ed14-4546-aee5-664816c63d17" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> fsspec</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Open the virtual version:</p>
+<div id="4823fcd3-64e3-4735-9dd3-fb95b6b4cb3a" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>observed <span class="op">=</span> xr.open_zarr(session.store, consolidated<span class="op">=</span><span class="va">False</span>, zarr_format<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>observed</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewbox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewbox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
+ *
+ */
+
+:root {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base rgba(0, 0, 0, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(0, 0, 0, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, white)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, white) h s calc(l - 15))
+  );
+}
+
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+body.vscode-dark {
+  --xr-font-color0: var(
+    --jp-content-font-color0,
+    var(--pst-color-text-base, rgba(255, 255, 255, 1))
+  );
+  --xr-font-color2: var(
+    --jp-content-font-color2,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.54))
+  );
+  --xr-font-color3: var(
+    --jp-content-font-color3,
+    var(--pst-color-text-base, rgba(255, 255, 255, 0.38))
+  );
+  --xr-border-color: var(
+    --jp-border-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 10))
+  );
+  --xr-disabled-color: var(
+    --jp-layout-color3,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 40))
+  );
+  --xr-background-color: var(
+    --jp-layout-color0,
+    var(--pst-color-on-background, #111111)
+  );
+  --xr-background-color-row-even: var(
+    --jp-layout-color1,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 5))
+  );
+  --xr-background-color-row-odd: var(
+    --jp-layout-color2,
+    hsl(from var(--pst-color-on-background, #111111) h s calc(l + 15))
+  );
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: solid 1px var(--xr-border-color);
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-array-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type {
+  color: var(--xr-font-color2);
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item input {
+  display: inline-block;
+  opacity: 0;
+  height: 0;
+}
+
+.xr-section-item input + label {
+  color: var(--xr-disabled-color);
+  border: 2px solid transparent !important;
+}
+
+.xr-section-item input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item input:focus + label {
+  border: 2px solid var(--xr-font-color0) !important;
+}
+
+.xr-section-item input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: "►";
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: "▼";
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  display: none;
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: "(";
+}
+
+.xr-dim-list:after {
+  content: ")";
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ",";
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  border-color: var(--xr-background-color-row-odd);
+  margin-bottom: 0;
+  padding-top: 2px;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+  border-color: var(--xr-background-color-row-even);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  border-top: 2px dotted var(--xr-background-color);
+  padding-bottom: 20px !important;
+  padding-top: 10px !important;
+}
+
+.xr-var-attrs-in + label,
+.xr-var-data-in + label,
+.xr-index-data-in + label {
+  padding: 0 1px;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-data > pre,
+.xr-index-data > pre,
+.xr-var-data > table > tbody > tr {
+  background-color: transparent !important;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.xr-var-attrs-in:checked + label > .xr-icon-file-text2,
+.xr-var-data-in:checked + label > .xr-icon-database,
+.xr-index-data-in:checked + label > .xr-icon-database {
+  color: var(--xr-font-color0);
+  filter: drop-shadow(1px 1px 5px var(--xr-font-color2));
+  stroke-width: 0.8px;
+}
+</style><pre class="xr-text-repr-fallback">&lt;xarray.Dataset&gt; Size: 3GB
+Dimensions:  (time: 731, lat: 600, lon: 1440)
+Coordinates:
+  * lat      (lat) float64 5kB -59.88 -59.62 -59.38 -59.12 ... 89.38 89.62 89.88
+  * lon      (lon) float64 12kB 0.125 0.375 0.625 0.875 ... 359.4 359.6 359.9
+  * time     (time) datetime64[ns] 6kB 2015-01-01T12:00:00 ... 2016-12-31T12:...
+Data variables:
+    tasmax   (time, lat, lon) float32 3GB dask.array&lt;chunksize=(1, 600, 1440), meta=np.ndarray&gt;
+Attributes: (12/22)
+    cmip6_source_id:       ACCESS-CM2
+    cmip6_institution_id:  CSIRO-ARCCSS
+    cmip6_license:         CC-BY-SA 4.0
+    activity:              NEX-GDDP-CMIP6
+    Conventions:           CF-1.7
+    frequency:             day
+    ...                    ...
+    doi:                   https://doi.org/10.7917/OFSG3345
+    external_variables:    areacella
+    contact:               Dr. Bridget Thrasher: bridget@climateanalyticsgrou...
+    creation_date:         Sat Nov 16 13:31:18 PST 2024
+    disclaimer:            These data are considered provisional and subject ...
+    tracking_id:           d4b2123b-abf9-4c3c-a780-58df6ce4e67f</pre><div class="xr-wrap" style="display:none"><div class="xr-header"><div class="xr-obj-type">xarray.Dataset</div></div><ul class="xr-sections"><li class="xr-section-item"><input id="section-0fc802a7-5563-4a28-8023-cbcc0cab3e25" class="xr-section-summary-in" type="checkbox" disabled=""><label for="section-0fc802a7-5563-4a28-8023-cbcc0cab3e25" class="xr-section-summary" title="Expand/collapse section">Dimensions:</label><div class="xr-section-inline-details"><ul class="xr-dim-list"><li><span class="xr-has-index">time</span>: 731</li><li><span class="xr-has-index">lat</span>: 600</li><li><span class="xr-has-index">lon</span>: 1440</li></ul></div><div class="xr-section-details"></div></li><li class="xr-section-item"><input id="section-28b7c4c4-44b9-4bd1-b0b9-88edd2987b45" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-28b7c4c4-44b9-4bd1-b0b9-88edd2987b45" class="xr-section-summary">Coordinates: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">lat</span></div><div class="xr-var-dims">(lat)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">-59.88 -59.62 ... 89.62 89.88</div><input id="attrs-01a82922-d444-49d3-a394-8786a04c30b9" class="xr-var-attrs-in" type="checkbox"><label for="attrs-01a82922-d444-49d3-a394-8786a04c30b9" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-12521c28-1949-4c66-990c-4058681d47b5" class="xr-var-data-in" type="checkbox"><label for="data-12521c28-1949-4c66-990c-4058681d47b5" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>units :</span></dt><dd>degrees_north</dd><dt><span>long_name :</span></dt><dd>Latitude</dd></dl></div><div class="xr-var-data"><pre>array([-59.875, -59.625, -59.375, ...,  89.375,  89.625,  89.875], shape=(600,))</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">lon</span></div><div class="xr-var-dims">(lon)</div><div class="xr-var-dtype">float64</div><div class="xr-var-preview xr-preview">0.125 0.375 0.625 ... 359.6 359.9</div><input id="attrs-98ab4c21-e936-48b2-b540-528745a93649" class="xr-var-attrs-in" type="checkbox"><label for="attrs-98ab4c21-e936-48b2-b540-528745a93649" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-f2656759-47c5-48a9-8c65-b84a21c7bada" class="xr-var-data-in" type="checkbox"><label for="data-f2656759-47c5-48a9-8c65-b84a21c7bada" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>units :</span></dt><dd>degrees_east</dd><dt><span>long_name :</span></dt><dd>Longitude</dd></dl></div><div class="xr-var-data"><pre>array([1.25000e-01, 3.75000e-01, 6.25000e-01, ..., 3.59375e+02, 3.59625e+02,
+       3.59875e+02], shape=(1440,))</pre></div></li><li class="xr-var-item"><div class="xr-var-name"><span class="xr-has-index">time</span></div><div class="xr-var-dims">(time)</div><div class="xr-var-dtype">datetime64[ns]</div><div class="xr-var-preview xr-preview">2015-01-01T12:00:00 ... 2016-12-...</div><input id="attrs-6053f31a-40ab-44ab-8e4f-b7ff6b6ced04" class="xr-var-attrs-in" type="checkbox"><label for="attrs-6053f31a-40ab-44ab-8e4f-b7ff6b6ced04" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-67c010a0-c8e6-48aa-ace2-010a44d28aa0" class="xr-var-data-in" type="checkbox"><label for="data-67c010a0-c8e6-48aa-ace2-010a44d28aa0" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>axis :</span></dt><dd>T</dd><dt><span>long_name :</span></dt><dd>time</dd><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>bounds :</span></dt><dd>time_bnds</dd></dl></div><div class="xr-var-data"><pre>array(['2015-01-01T12:00:00.000000000', '2015-01-02T12:00:00.000000000',
+       '2015-01-03T12:00:00.000000000', ..., '2016-12-29T12:00:00.000000000',
+       '2016-12-30T12:00:00.000000000', '2016-12-31T12:00:00.000000000'],
+      shape=(731,), dtype='datetime64[ns]')</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-3cff715c-f60d-4307-a1c3-4cf908ab990a" class="xr-section-summary-in" type="checkbox" checked=""><label for="section-3cff715c-f60d-4307-a1c3-4cf908ab990a" class="xr-section-summary">Data variables: <span>(1)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-var-name"><span>tasmax</span></div><div class="xr-var-dims">(time, lat, lon)</div><div class="xr-var-dtype">float32</div><div class="xr-var-preview xr-preview">dask.array&lt;chunksize=(1, 600, 1440), meta=np.ndarray&gt;</div><input id="attrs-be3c64d3-53a7-4f1b-a4d6-b81d024084fa" class="xr-var-attrs-in" type="checkbox"><label for="attrs-be3c64d3-53a7-4f1b-a4d6-b81d024084fa" title="Show/Hide attributes"><svg class="icon xr-icon-file-text2"><use href="#icon-file-text2"></use></svg></label><input id="data-671f559a-8dfe-4e9a-9f3a-32ef1b056708" class="xr-var-data-in" type="checkbox"><label for="data-671f559a-8dfe-4e9a-9f3a-32ef1b056708" title="Show/Hide data repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-var-attrs"><dl class="xr-attrs"><dt><span>time :</span></dt><dd>60265.5</dd><dt><span>standard_name :</span></dt><dd>air_temperature</dd><dt><span>long_name :</span></dt><dd>Daily Maximum Near-Surface Air Temperature</dd><dt><span>units :</span></dt><dd>K</dd><dt><span>comment :</span></dt><dd>maximum near-surface (usually, 2 meter) air temperature (add cell_method attribute 'time: max')</dd><dt><span>cell_methods :</span></dt><dd>area: mean time: maximum</dd><dt><span>cell_measures :</span></dt><dd>area: areacella</dd><dt><span>history :</span></dt><dd>2019-11-08T10:48:26Z altered by CMOR: Treated scalar dimension: 'height'. 2019-11-08T10:48:26Z altered by CMOR: replaced missing value flag (-1.07374e+09) with standard missing value (1e+20).</dd></dl></div><div class="xr-var-data">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th></th>
+<th data-quarto-table-cell-role="th">Array</th>
+<th data-quarto-table-cell-role="th">Chunk</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Bytes</td>
+<td>2.35 GiB</td>
+<td>3.30 MiB</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Shape</td>
+<td>(731, 600, 1440)</td>
+<td>(1, 600, 1440)</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Dask graph</td>
+<td colspan="2">731 chunks in 2 graph layers</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Data type</td>
+<td colspan="2">float32 numpy.ndarray</td>
+</tr>
+</tbody>
+</table></td>
+<td><svg width="215" height="135" style="stroke:rgb(0,0,0);stroke-width:1">
+<!-- Horizontal lines --> <line x1="10" y1="0" x2="45" y2="35" style="stroke-width:2"></line> <line x1="10" y1="50" x2="45" y2="85" style="stroke-width:2"></line> <!-- Vertical lines --> <line x1="10" y1="0" x2="10" y2="50" style="stroke-width:2"></line> <line x1="11" y1="1" x2="11" y2="51"></line> <line x1="13" y1="3" x2="13" y2="53"></line> <line x1="15" y1="5" x2="15" y2="55"></line> <line x1="17" y1="7" x2="17" y2="57"></line> <line x1="19" y1="9" x2="19" y2="59"></line> <line x1="21" y1="11" x2="21" y2="61"></line> <line x1="23" y1="13" x2="23" y2="63"></line> <line x1="25" y1="15" x2="25" y2="65"></line> <line x1="26" y1="16" x2="26" y2="66"></line> <line x1="28" y1="18" x2="28" y2="68"></line> <line x1="30" y1="20" x2="30" y2="70"></line> <line x1="32" y1="22" x2="32" y2="72"></line> <line x1="34" y1="24" x2="34" y2="74"></line> <line x1="36" y1="26" x2="36" y2="76"></line> <line x1="38" y1="28" x2="38" y2="78"></line> <line x1="40" y1="30" x2="40" y2="80"></line> <line x1="42" y1="32" x2="42" y2="82"></line> <line x1="43" y1="33" x2="43" y2="83"></line> <line x1="45" y1="35" x2="45" y2="85" style="stroke-width:2"></line> <!-- Colored Rectangle --> <polygon points="10.0,0.0 45.83333333333333,35.83333333333333 45.83333333333333,85.83333333333333 10.0,50.0" style="fill:#8B4903A0;stroke-width:0"></polygon> <!-- Horizontal lines --> <line x1="10" y1="0" x2="130" y2="0" style="stroke-width:2"></line> <line x1="11" y1="1" x2="131" y2="1"></line> <line x1="13" y1="3" x2="133" y2="3"></line> <line x1="15" y1="5" x2="135" y2="5"></line> <line x1="17" y1="7" x2="137" y2="7"></line> <line x1="19" y1="9" x2="139" y2="9"></line> <line x1="21" y1="11" x2="141" y2="11"></line> <line x1="23" y1="13" x2="143" y2="13"></line> <line x1="25" y1="15" x2="145" y2="15"></line> <line x1="26" y1="16" x2="146" y2="16"></line> <line x1="28" y1="18" x2="148" y2="18"></line> <line x1="30" y1="20" x2="150" y2="20"></line> <line x1="32" y1="22" x2="152" y2="22"></line> <line x1="34" y1="24" x2="154" y2="24"></line> <line x1="36" y1="26" x2="156" y2="26"></line> <line x1="38" y1="28" x2="158" y2="28"></line> <line x1="40" y1="30" x2="160" y2="30"></line> <line x1="42" y1="32" x2="162" y2="32"></line> <line x1="43" y1="33" x2="163" y2="33"></line> <line x1="45" y1="35" x2="165" y2="35" style="stroke-width:2"></line> <!-- Vertical lines --> <line x1="10" y1="0" x2="45" y2="35" style="stroke-width:2"></line> <line x1="130" y1="0" x2="165" y2="35" style="stroke-width:2"></line> <!-- Colored Rectangle --> <polygon points="10.0,0.0 130.0,0.0 165.83333333333331,35.83333333333333 45.83333333333333,35.83333333333333" style="fill:#8B4903A0;stroke-width:0"></polygon> <!-- Horizontal lines --> <line x1="45" y1="35" x2="165" y2="35" style="stroke-width:2"></line> <line x1="45" y1="85" x2="165" y2="85" style="stroke-width:2"></line> <!-- Vertical lines --> <line x1="45" y1="35" x2="45" y2="85" style="stroke-width:2"></line> <line x1="165" y1="35" x2="165" y2="85" style="stroke-width:2"></line> <!-- Colored Rectangle --> <polygon points="45.83333333333333,35.83333333333333 165.83333333333331,35.83333333333333 165.83333333333331,85.83333333333333 45.83333333333333,85.83333333333333" style="fill:#ECB172A0;stroke-width:0"></polygon> <!-- Text --> <text x="105.833333" y="105.833333" font-size="1.0rem" font-weight="100" text-anchor="middle">1440</text> <text x="185.833333" y="60.833333" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,185.833333,60.833333)">600</text> <text x="17.916667" y="87.916667" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,17.916667,87.916667)">731</text>
+</svg></td>
+</tr>
+</tbody>
+</table>
+</div></li></ul></div></li><li class="xr-section-item"><input id="section-7497d05c-ecd6-4a08-8542-e89799d74ef5" class="xr-section-summary-in" type="checkbox"><label for="section-7497d05c-ecd6-4a08-8542-e89799d74ef5" class="xr-section-summary">Indexes: <span>(3)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><ul class="xr-var-list"><li class="xr-var-item"><div class="xr-index-name"><div>lat</div></div><div class="xr-index-preview">PandasIndex</div><input type="checkbox" disabled=""><label></label><input id="index-767769ff-8e94-484d-9751-497ff9369882" class="xr-index-data-in" type="checkbox"><label for="index-767769ff-8e94-484d-9751-497ff9369882" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([-59.875, -59.625, -59.375, -59.125, -58.875, -58.625, -58.375, -58.125,
+       -57.875, -57.625,
+       ...
+        87.625,  87.875,  88.125,  88.375,  88.625,  88.875,  89.125,  89.375,
+        89.625,  89.875],
+      dtype='float64', name='lat', length=600))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>lon</div></div><div class="xr-index-preview">PandasIndex</div><input type="checkbox" disabled=""><label></label><input id="index-7c00775c-9a9b-4eb0-bc9f-8dbb12381c63" class="xr-index-data-in" type="checkbox"><label for="index-7c00775c-9a9b-4eb0-bc9f-8dbb12381c63" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(Index([  0.125,   0.375,   0.625,   0.875,   1.125,   1.375,   1.625,   1.875,
+         2.125,   2.375,
+       ...
+       357.625, 357.875, 358.125, 358.375, 358.625, 358.875, 359.125, 359.375,
+       359.625, 359.875],
+      dtype='float64', name='lon', length=1440))</pre></div></li><li class="xr-var-item"><div class="xr-index-name"><div>time</div></div><div class="xr-index-preview">PandasIndex</div><input type="checkbox" disabled=""><label></label><input id="index-53b2c84c-d4ea-4f60-97f8-d8a856b75b1c" class="xr-index-data-in" type="checkbox"><label for="index-53b2c84c-d4ea-4f60-97f8-d8a856b75b1c" title="Show/Hide index repr"><svg class="icon xr-icon-database"><use href="#icon-database"></use></svg></label><div class="xr-index-data"><pre>PandasIndex(DatetimeIndex(['2015-01-01 12:00:00', '2015-01-02 12:00:00',
+               '2015-01-03 12:00:00', '2015-01-04 12:00:00',
+               '2015-01-05 12:00:00', '2015-01-06 12:00:00',
+               '2015-01-07 12:00:00', '2015-01-08 12:00:00',
+               '2015-01-09 12:00:00', '2015-01-10 12:00:00',
+               ...
+               '2016-12-22 12:00:00', '2016-12-23 12:00:00',
+               '2016-12-24 12:00:00', '2016-12-25 12:00:00',
+               '2016-12-26 12:00:00', '2016-12-27 12:00:00',
+               '2016-12-28 12:00:00', '2016-12-29 12:00:00',
+               '2016-12-30 12:00:00', '2016-12-31 12:00:00'],
+              dtype='datetime64[ns]', name='time', length=731, freq=None))</pre></div></li></ul></div></li><li class="xr-section-item"><input id="section-f39de1d8-9bf7-4014-97fe-819729b5f23e" class="xr-section-summary-in" type="checkbox"><label for="section-f39de1d8-9bf7-4014-97fe-819729b5f23e" class="xr-section-summary">Attributes: <span>(22)</span></label><div class="xr-section-inline-details"></div><div class="xr-section-details"><dl class="xr-attrs"><dt><span>cmip6_source_id :</span></dt><dd>ACCESS-CM2</dd><dt><span>cmip6_institution_id :</span></dt><dd>CSIRO-ARCCSS</dd><dt><span>cmip6_license :</span></dt><dd>CC-BY-SA 4.0</dd><dt><span>activity :</span></dt><dd>NEX-GDDP-CMIP6</dd><dt><span>Conventions :</span></dt><dd>CF-1.7</dd><dt><span>frequency :</span></dt><dd>day</dd><dt><span>institution :</span></dt><dd>NASA Earth Exchange, NASA Ames Research Center, Moffett Field, CA 94035</dd><dt><span>variant_label :</span></dt><dd>r1i1p1f1</dd><dt><span>product :</span></dt><dd>output</dd><dt><span>realm :</span></dt><dd>atmos</dd><dt><span>source :</span></dt><dd>BCSD</dd><dt><span>scenario :</span></dt><dd>ssp126</dd><dt><span>references :</span></dt><dd>BCSD method: Thrasher et al., 2012, Hydrol. Earth Syst. Sci.,16, 3309-3314. Ref period obs: latest version of the Princeton Global Meteorological Forcings (http://hydrology.princeton.edu/data.php), based on Sheffield et al., 2006, J. Climate, 19 (13), 3088-3111.</dd><dt><span>version :</span></dt><dd>2.0</dd><dt><span>title :</span></dt><dd>ACCESS-CM2, r1i1p1f1, ssp126, global downscaled CMIP6 climate projection data</dd><dt><span>resolution_id :</span></dt><dd>0.25 degree</dd><dt><span>doi :</span></dt><dd>https://doi.org/10.7917/OFSG3345</dd><dt><span>external_variables :</span></dt><dd>areacella</dd><dt><span>contact :</span></dt><dd>Dr. Bridget Thrasher: bridget@climateanalyticsgroup.org, Dr. Ian Brosnan: ian.g.brosnan@nasa.gov</dd><dt><span>creation_date :</span></dt><dd>Sat Nov 16 13:31:18 PST 2024</dd><dt><span>disclaimer :</span></dt><dd>These data are considered provisional and subject to change. They are provided as is without any warranty of any kind, either express or implied, arising by law or otherwise, including but not limited to warranties of completeness, non-infringement, accuracy, merchantability, or fitness for a particular purpose. The user assumes all risk associated with the use of, or inability to use, these data.</dd><dt><span>tracking_id :</span></dt><dd>d4b2123b-abf9-4c3c-a780-58df6ce4e67f</dd></dl></div></li></ul></div></div>
+</div>
+</div>
+<p>Let’s use a traditional method to open the NetCDF files directly:</p>
+<div id="1289b826-c455-48da-8f22-088d9dbb3870" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> fsspec.filesystem(<span class="st">"s3"</span>, anon<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fsspec_caching <span class="op">=</span> {</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cache_type"</span>: <span class="st">"blockcache"</span>,  <span class="co"># block cache stores blocks of fixed size and uses eviction using a LRU strategy.</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"block_size"</span>: <span class="dv">8</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span> <span class="dv">1024</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span> <span class="dv">1024</span>,  <span class="co"># size in bytes per block, adjust depends on the file size but the recommended size is in the MB</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>expected <span class="op">=</span> xr.open_mfdataset(</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    [fs.<span class="bu">open</span>(url, <span class="op">**</span>fsspec_caching) <span class="cf">for</span> url <span class="kw">in</span> urls], engine<span class="op">=</span><span class="st">"h5netcdf"</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s use xarray’s testing utilities to compare our virtual dataset with the original dataset:</p>
+<div id="cf1b8d2d-e038-4521-beba-225a774edf06" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>xr.testing.assert_allclose(expected, observed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
