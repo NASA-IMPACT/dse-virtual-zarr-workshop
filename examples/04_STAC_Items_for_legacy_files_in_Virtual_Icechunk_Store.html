@@ -386,15 +386,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>There is a virtual icechunk store that is publicly available at: s3://nasa-waterinsight/virtual-zarr-store/NLDAS-3-icechunk/</p>
 <p>This notebook goes through the current thinking for how you would set up STAC items that point to the legacy file formats referenced by the virtual store.</p>
-<div id="6eb787d3-2e2c-4f72-9aed-12022fa6f5c9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:34:19.234297Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:34:19.234129Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:34:20.634162Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:34:20.633495Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:34:19.234279Z&quot;}}" data-execution_count="1">
+<div id="6eb787d3-2e2c-4f72-9aed-12022fa6f5c9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:54.714879Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:54.714472Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:54.719937Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:54.719319Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:54.714846Z&quot;}}" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> icechunk</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> zarr</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xstac</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Zarr can emit a lot of warnings about Numcodecs not being including in the Zarr version 3 specification yet – let’s suppress those.</p>
-<div id="93265dde-ef61-4217-b0e1-b6e68095febe" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:34:20.634775Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:34:20.634637Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:34:20.637507Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:34:20.637032Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:34:20.634761Z&quot;}}" data-execution_count="2">
+<div id="93265dde-ef61-4217-b0e1-b6e68095febe" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:26:13.261734Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:26:13.261610Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:26:13.264680Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:26:13.264154Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:26:13.261722Z&quot;}}" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(</span>
@@ -409,7 +410,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>https://github.com/earth-mover/icechunk/pull/1161</li>
 </ul>
 <p>Until then:</p>
-<div id="ac29867a-c95e-4956-b370-dceb0dd1bd94" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:34:20.638131Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:34:20.637978Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:34:24.816701Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:34:24.815618Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:34:20.638118Z&quot;}}" data-execution_count="3">
+<div id="ac29867a-c95e-4956-b370-dceb0dd1bd94" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:26:13.265158Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:26:13.265040Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:26:17.247977Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:26:17.247309Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:26:13.265147Z&quot;}}" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>storage <span class="op">=</span> icechunk.s3_storage(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    bucket<span class="op">=</span><span class="st">"nasa-waterinsight"</span>,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    prefix<span class="op">=</span><span class="st">"virtual-zarr-store/NLDAS-3-icechunk/"</span>,</span>
@@ -441,26 +442,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>From this virtual icechunk store we can get the locations of all the chunks. This technically only accesses a single snapshot, so to get them all you might have to recurse back through time (https://github.com/earth-mover/icechunk/issues/1194). In this case though</p>
 <p>Note that this takes some time.</p>
-<div id="cf9ea3ee-6bc0-4ed8-8566-d7b9fcb38f21" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:34:24.817220Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:34:24.817015Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:11.948332Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:11.947801Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:34:24.817209Z&quot;}}" data-execution_count="4">
+<div id="cf9ea3ee-6bc0-4ed8-8566-d7b9fcb38f21" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:26:17.249684Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:26:17.248982Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:06.206284Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:06.205273Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:26:17.249653Z&quot;}}" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>chunk_locations <span class="op">=</span> session.all_virtual_chunk_locations()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>CPU times: user 24.2 s, sys: 3.16 s, total: 27.4 s
-Wall time: 47.1 s</code></pre>
+<pre><code>CPU times: user 24.1 s, sys: 3.28 s, total: 27.4 s
+Wall time: 48.9 s</code></pre>
 </div>
 </div>
-<div id="09698f27-2e51-4558-8db8-676adb7e1566" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:11.960768Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:11.960416Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:11.965235Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:11.964381Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:11.960752Z&quot;}}" data-execution_count="5">
+<div id="09698f27-2e51-4558-8db8-676adb7e1566" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:06.209342Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:06.209080Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:06.222101Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:06.219991Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:06.209320Z&quot;}}" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(chunk_locations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>14194310</code></pre>
 </div>
 </div>
 <p>That gives the locations of every chunk. So we need to deduplicate it to get a list of files</p>
-<div id="567fc0ab-94f8-4921-844c-a7a83691a431" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:11.966059Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:11.965842Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:12.457196Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:12.456609Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:11.966041Z&quot;}}" data-execution_count="6">
+<div id="567fc0ab-94f8-4921-844c-a7a83691a431" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:06.222864Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:06.222664Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:07.090958Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:07.088492Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:06.222846Z&quot;}}" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>legacy_files <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">list</span>(<span class="bu">set</span>(chunk_locations)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="e06b3988-9ee0-4af2-8113-56dbcaf5cf24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:12.457579Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:12.457471Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:12.475093Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:12.474607Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:12.457567Z&quot;}}" data-execution_count="7">
+<div id="e06b3988-9ee0-4af2-8113-56dbcaf5cf24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:07.091991Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:07.091677Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:07.109410Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:07.108725Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:07.091963Z&quot;}}" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>legacy_files[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>['s3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010101.030.beta.nc',
@@ -471,30 +472,30 @@ Wall time: 47.1 s</code></pre>
 </div>
 </div>
 <p>As a sanity check we can just confirm that we have the same number of files as we do timesteps.</p>
-<div id="1920fb20-01a0-4d2a-b10b-66ec8b961a44" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:12.475590Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:12.475459Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:12.477857Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:12.477499Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:12.475578Z&quot;}}" data-execution_count="8">
+<div id="1920fb20-01a0-4d2a-b10b-66ec8b961a44" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:07.110555Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:07.110251Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:07.125320Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:07.124197Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:07.110528Z&quot;}}" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(legacy_files) <span class="op">==</span> <span class="bu">len</span>(ds.time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For instance here is the chunkgrid for <code>ds.PSurf</code></p>
-<div id="7c83fce3-5861-4d36-a283-6a806121ddb4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:12.478311Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:12.478199Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:12.480860Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:12.480548Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:12.478300Z&quot;}}" data-execution_count="9">
+<div id="7c83fce3-5861-4d36-a283-6a806121ddb4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:07.126245Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:07.126016Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:07.138251Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:07.136153Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:07.126227Z&quot;}}" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ds.PSurf.data.numblocks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>(8399, 13, 13)</code></pre>
 </div>
 </div>
 <p>You can multiply all those numbers together to get the total number of chunks</p>
-<div id="252d6b18-03f4-4baf-bbf4-3206bd0fb72a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T13:46:43.489232Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T13:46:43.488954Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T13:46:43.493567Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T13:46:43.493113Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T13:46:43.489213Z&quot;}}" data-execution_count="22">
+<div id="252d6b18-03f4-4baf-bbf4-3206bd0fb72a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:07.140674Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:07.140437Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:07.154543Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:07.152502Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:07.140654Z&quot;}}" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>numchunks <span class="op">=</span> <span class="dv">1</span> </span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> ds.PSurf.data.numblocks:</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    numchunks <span class="op">*=</span> n</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>numchunks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>1419431</code></pre>
 </div>
 </div>
 <p>That number matches the number in the dask array representation.</p>
-<div id="6e7f5ee8-9b40-42e5-9b4b-fa480b360bc5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T13:46:44.786729Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T13:46:44.786489Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T13:46:44.791309Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T13:46:44.790682Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T13:46:44.786712Z&quot;}}" data-execution_count="23">
+<div id="6e7f5ee8-9b40-42e5-9b4b-fa480b360bc5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:07.159412Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:07.157721Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:07.181583Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:07.179558Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:07.159286Z&quot;}}" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ds.PSurf.data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <colgroup>
 <col style="width: 50%">
@@ -540,18 +541,18 @@ Wall time: 47.1 s</code></pre>
 </div>
 </div>
 <p>But we can’t really know what the flat list of <code>chunk_locations</code> means in the context of that chunk grid. What does this mean?</p>
-<div id="0a7e6b59-229f-4844-83f8-76f95c0d3532" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T13:26:49.953931Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T13:26:49.953561Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T13:26:49.957226Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T13:26:49.956925Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T13:26:49.953902Z&quot;}}" data-execution_count="15">
+<div id="0a7e6b59-229f-4844-83f8-76f95c0d3532" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:07.183051Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:07.182817Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:07.190010Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:07.189423Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:07.183032Z&quot;}}" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>chunk_locations[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>'s3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010101.030.beta.nc'</code></pre>
 </div>
 </div>
 <p>Ok so you can’t really get that information out of icechunk right now as far as I can tell. So what about the other piece.</p>
 <p>First let’s take a slice of the array that represents just one point in time. As long as all the variables have the same shape it shouldn’t matter which one you pick.</p>
-<div id="fea2b74a-8476-4bb3-ab0f-1966152d9a30" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:40:16.447046Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:40:16.446490Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:40:16.456064Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:40:16.455306Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:40:16.446999Z&quot;}}" data-execution_count="135">
+<div id="fea2b74a-8476-4bb3-ab0f-1966152d9a30" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:27:07.192629Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:27:07.192327Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:27:07.435302Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:27:07.434765Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:27:07.192601Z&quot;}}" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ds.PSurf.data[<span class="dv">0</span>, :, :]</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="135">
+<div class="cell-output cell-output-display" data-execution_count="13">
 <table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
 <colgroup>
 <col style="width: 50%">
@@ -596,21 +597,21 @@ Wall time: 47.1 s</code></pre>
 </table>
 </div>
 </div>
-<div id="dbd48a92-f053-45f2-8646-a04804d90b99" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:39:23.125480Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:39:23.125164Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:39:23.130819Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:39:23.130122Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:39:23.125458Z&quot;}}" data-execution_count="132">
+<div id="dbd48a92-f053-45f2-8646-a04804d90b99" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:04.299206Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:04.298653Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:04.309076Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:04.308221Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:04.299165Z&quot;}}" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>lat_chunk_indices <span class="op">=</span> np.insert(np.array(a.chunks[<span class="dv">0</span>]).cumsum() <span class="op">-</span> <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>lat_chunk_bounds <span class="op">=</span> ds.lat.data[lat_chunk_indices]</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>lat_chunk_bounds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="132">
+<div class="cell-output cell-output-display" data-execution_count="16">
 <pre><code>array([ 7.00500011, 11.99499989, 16.99499893, 21.99499893, 26.99499893,
        31.99499893, 36.99499893, 41.99499893, 46.99499893, 51.99499893,
        56.99499893, 61.99499893, 66.99499512, 71.99499512])</code></pre>
 </div>
 </div>
-<div id="db55ca47-9559-4fe4-83eb-f254478c51bb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:39:57.734751Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:39:57.734221Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:39:57.744929Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:39:57.743415Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:39:57.734712Z&quot;}}" data-execution_count="134">
+<div id="db55ca47-9559-4fe4-83eb-f254478c51bb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:04.675108Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:04.674582Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:04.683795Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:04.682925Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:04.675066Z&quot;}}" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>lon_chunk_indices <span class="op">=</span> np.insert(np.array(a.chunks[<span class="dv">1</span>]).cumsum() <span class="op">-</span> <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>lon_chunk_bounds <span class="op">=</span> ds.lon.data[lon_chunk_indices]</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>lon_chunk_bounds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="134">
+<div class="cell-output cell-output-display" data-execution_count="17">
 <pre><code>array([-168.99499512, -160.00498962, -151.00498962, -142.00498962,
        -133.00500488, -124.00499725, -115.00499725, -106.00499725,
         -97.00499725,  -88.00499725,  -79.00499725,  -70.00499725,
@@ -618,29 +619,29 @@ Wall time: 47.1 s</code></pre>
 </div>
 </div>
 <p>So those are the min and max of each chunk. We can construct the bounding box for each chunk by stepping along the lats and lons and taking two items at a time. We’ll start with an array of zeros that has the same shape as the chunk grid except the last dimension is size 4 so that it can contain the bboxes.</p>
-<div id="26e76681-b47f-4a3c-bd76-6fb3ef845ece" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:46:54.205125Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:46:54.204883Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:46:54.211709Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:46:54.210589Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:46:54.205110Z&quot;}}" data-execution_count="152">
+<div id="26e76681-b47f-4a3c-bd76-6fb3ef845ece" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:05.134627Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:05.134459Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:05.137984Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:05.137591Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:05.134615Z&quot;}}" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ds.PSurf.dims</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="152">
+<div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>('time', 'lat', 'lon')</code></pre>
 </div>
 </div>
-<div id="46c5004a-8b1e-4b4e-9c10-6b2f49d0f153" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:52:14.908504Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:52:14.908287Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:52:14.912223Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:52:14.911610Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:52:14.908488Z&quot;}}" data-execution_count="157">
+<div id="46c5004a-8b1e-4b4e-9c10-6b2f49d0f153" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:05.371734Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:05.371311Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:05.378271Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:05.376959Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:05.371703Z&quot;}}" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bboxes <span class="op">=</span> np.zeros((a.numblocks[<span class="dv">0</span>], a.numblocks[<span class="dv">1</span>], <span class="dv">4</span>))</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(a.numblocks[<span class="dv">0</span>]):</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> m <span class="kw">in</span> <span class="bu">range</span>(a.numblocks[<span class="dv">1</span>]):</span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>        bboxes[n, m] <span class="op">=</span> [lon_chunk_bounds[m], lat_chunk_bounds[n], lon_chunk_bounds[m <span class="op">+</span> <span class="dv">1</span>], lat_chunk_bounds[n <span class="op">+</span> <span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="085bb52c-8bc0-4540-99cb-05be0972d8b5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:54:04.965066Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:54:04.964586Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:54:04.972809Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:54:04.971804Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:54:04.965024Z&quot;}}" data-execution_count="161">
+<div id="085bb52c-8bc0-4540-99cb-05be0972d8b5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:05.611556Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:05.611009Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:05.618480Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:05.617610Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:05.611515Z&quot;}}" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>bboxes[<span class="dv">0</span>, <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="161">
+<div class="cell-output cell-output-display" data-execution_count="20">
 <pre><code>array([-168.99499512,    7.00500011, -160.00498962,   11.99499989])</code></pre>
 </div>
 </div>
 <p>In practice we probably don’t need the bounding boxes for each chunk. We just need the bounding boxes for the legacy files which we can assume contain contiguous chunks.</p>
-<div id="918f634c-7e58-46f7-87ba-0267357bbb24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T14:53:43.512683Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T14:53:43.512261Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T14:53:43.528445Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T14:53:43.527941Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T14:53:43.512649Z&quot;}}" data-execution_count="160">
+<div id="918f634c-7e58-46f7-87ba-0267357bbb24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:06.111482Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:06.111027Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:06.127492Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:06.127133Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:06.111448Z&quot;}}" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ds.rio.bounds()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="160">
+<div class="cell-output cell-output-display" data-execution_count="21">
 <pre><code>(-168.9999951170962, 7.000000114825381, -51.99999725350927, 71.99999511680303)</code></pre>
 </div>
 </div>
@@ -648,7 +649,7 @@ Wall time: 47.1 s</code></pre>
 <h2 class="anchored" data-anchor-id="create-stac-items">Create STAC items</h2>
 <p>In order to construct a STAC Item for each of these legacy files we need to have the have the temporal and spatial bounds for each file. Unlike the STAC Collection we want the metadata in these to be pretty minimal.</p>
 <p>Just as a quick note we are using <code>pystac</code> here for construction and using <code>rustac</code> for reading/writing to stac-geoparquet.</p>
-<div id="34958152-456b-4586-a2bc-c01f8d1aa3f8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:34.319227Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:34.319010Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:34.325123Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:34.324615Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:34.319214Z&quot;}}" data-execution_count="10">
+<div id="34958152-456b-4586-a2bc-c01f8d1aa3f8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:06.780585Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:06.779350Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:06.807099Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:06.806521Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:06.780541Z&quot;}}" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -656,11 +657,11 @@ Wall time: 47.1 s</code></pre>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rustac</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>First we will read in the collection that we had created in the previous notebook:</p>
-<div id="dfebfd31-b54e-424f-838b-4f38fd34b753" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:36.395842Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:36.395463Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:36.409770Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:36.409049Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:36.395815Z&quot;}}" data-execution_count="11">
+<div id="dfebfd31-b54e-424f-838b-4f38fd34b753" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:07.368862Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:07.368406Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:07.376013Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:07.374736Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:07.368826Z&quot;}}" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>collection <span class="op">=</span> pystac.Collection.from_file(<span class="st">"./collection.json"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We’ll use some hard-coded values that are pulled straight from the <code>xr.Dataset</code>. For instance we know that the bounding box for each of these netcdf file is exactly the same they just each represent a different timestep.</p>
-<div id="5817fabb-5c72-40a6-95de-89736a3386a4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:44:47.328231Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:44:47.327323Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:44:47.345503Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:44:47.345003Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:44:47.328184Z&quot;}}" data-execution_count="20">
+<div id="5817fabb-5c72-40a6-95de-89736a3386a4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:07.882518Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:07.882069Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:07.930146Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:07.929076Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:07.882482Z&quot;}}" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> box</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely <span class="im">import</span> to_geojson</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -672,14 +673,14 @@ Wall time: 47.1 s</code></pre>
 <span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>end_time <span class="op">=</span> ds.time.end_time</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The item-specific values we will deduce from the filename for now, but ideally we would get this information in a more systematic way from the chunk information. Let’s take a look at those legacy filepaths again:</p>
-<div id="4a42d27c-a342-4361-a706-3e8ac1b8aca3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:35:44.102672Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:35:44.102084Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:35:44.106279Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:35:44.105793Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:35:44.102651Z&quot;}}" data-execution_count="13">
+<div id="4a42d27c-a342-4361-a706-3e8ac1b8aca3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:08.545731Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:08.545165Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:08.550616Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:08.549817Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:08.545699Z&quot;}}" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>legacy_files[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="25">
 <pre><code>'s3://nasa-waterinsight/NLDAS3/forcing/daily/200101/NLDAS_FOR0010_D.A20010101.030.beta.nc'</code></pre>
 </div>
 </div>
 <p>So - and this is kind of hacky - we can see that the whole date is actually encoded in the filepath. We just need to grab it out of there and parse it. Let’s create a function that creates an item that basically just has the spatial and temporal extents set and points to one particular legacy file on s3.</p>
-<div id="b032d0df-000b-40ed-894b-e491ab610941" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:27.045934Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:27.045759Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:27.049865Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:27.049391Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:27.045921Z&quot;}}" data-execution_count="14">
+<div id="b032d0df-000b-40ed-894b-e491ab610941" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:09.298930Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:09.298430Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:09.304952Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:09.304265Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:09.298892Z&quot;}}" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_item(legacy_filepath):</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    filename <span class="op">=</span> legacy_filepath.split(<span class="st">"/"</span>)[<span class="op">-</span><span class="dv">1</span>]</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    date <span class="op">=</span> filename.split(<span class="st">".030.beta."</span>)[<span class="dv">0</span>][<span class="op">-</span><span class="dv">8</span>:]</span>
@@ -717,16 +718,16 @@ Wall time: 47.1 s</code></pre>
 <span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We’ll run it on one file to make sure it works and see how long it takes.</p>
-<div id="07591a22-eeab-493b-adc1-3aa6d4601b41" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:28.222671Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:28.222477Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:28.410804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:28.410235Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:28.222658Z&quot;}}" data-execution_count="15">
+<div id="07591a22-eeab-493b-adc1-3aa6d4601b41" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:10.240883Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:10.240646Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:10.268389Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:10.268010Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:10.240865Z&quot;}}" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>item <span class="op">=</span> create_item(legacy_files[<span class="dv">0</span>])</span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>item</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>CPU times: user 722 μs, sys: 0 ns, total: 722 μs
-Wall time: 726 μs</code></pre>
+<pre><code>CPU times: user 1.03 ms, sys: 1.01 ms, total: 2.04 ms
+Wall time: 14 ms</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div class="cell-output cell-output-display" data-execution_count="27">
 
 
 <style>
@@ -1350,15 +1351,15 @@ Wall time: 726 μs</code></pre>
 </div>
 </div>
 <p>Validate the item:</p>
-<div id="6f50a053-e771-46cf-beff-1eca4551bfa9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:31.145283Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:31.145045Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:31.552006Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:31.551323Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:31.145267Z&quot;}}" data-execution_count="16">
+<div id="6f50a053-e771-46cf-beff-1eca4551bfa9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:11.397179Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:11.396755Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:11.697849Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:11.697001Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:11.397147Z&quot;}}" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>item.validate()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
+<div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>['https://schemas.stacspec.org/v1.1.0/item-spec/json-schema/item.json',
  'https://stac-extensions.github.io/storage/v2.0.0/schema.json']</code></pre>
 </div>
 </div>
 <p>Now instead of just making one of these we’ll want to make a whole bunch (8399 to be exact) so instead of storing each as its own json blob I’ll save them as an item collection in stac-geoparquet.</p>
-<div id="5f849122-8192-4c33-a730-0684b11c0cc2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:44.167538Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:44.167249Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:44.755053Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:44.754443Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:44.167516Z&quot;}}" data-execution_count="17">
+<div id="5f849122-8192-4c33-a730-0684b11c0cc2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:13.044936Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:13.044530Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:13.680534Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:13.679846Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:13.044904Z&quot;}}" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>items <span class="op">=</span> [</span>
@@ -1366,21 +1367,21 @@ Wall time: 726 μs</code></pre>
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> legacy_file <span class="kw">in</span> legacy_files</span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>CPU times: user 579 ms, sys: 5.4 ms, total: 584 ms
-Wall time: 584 ms</code></pre>
+<pre><code>CPU times: user 631 ms, sys: 1.2 ms, total: 632 ms
+Wall time: 632 ms</code></pre>
 </div>
 </div>
-<div id="488564ca-6177-4395-bdd2-9306421f99a7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:45.602632Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:45.602458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:45.900007Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:45.899466Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:45.602620Z&quot;}}" data-execution_count="18">
+<div id="488564ca-6177-4395-bdd2-9306421f99a7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:13.734429Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:13.734026Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:14.075989Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:14.075575Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:13.734398Z&quot;}}" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> rustac.write(<span class="st">"items.parquet"</span>, items)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
-<pre><code>{'e_tag': '2867791-63deba937e261-53b1f', 'version': None}</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<pre><code>{'e_tag': '2867927-63e5ff3d79810-53b1f', 'version': None}</code></pre>
 </div>
 </div>
 <p>Read it back in just to prove that we can:</p>
-<div id="83d7de6a-29e2-4a24-8760-b62d9cfda874" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-03T20:43:48.024874Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-03T20:43:48.024475Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-03T20:43:48.262216Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-03T20:43:48.261725Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-03T20:43:48.024843Z&quot;}}" data-execution_count="19">
+<div id="83d7de6a-29e2-4a24-8760-b62d9cfda874" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2025-09-09T15:28:16.916700Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-09-09T15:28:16.916269Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-09-09T15:28:17.187668Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-09-09T15:28:17.187322Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-09-09T15:28:16.916667Z&quot;}}" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>item_collection <span class="op">=</span> <span class="cf">await</span> rustac.read(<span class="st">"items.parquet"</span>)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>item_collection[<span class="st">"features"</span>][<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div class="cell-output cell-output-display" data-execution_count="31">
 <pre><code>{'type': 'Feature',
  'stac_version': '1.1.0',
  'stac_extensions': ['https://stac-extensions.github.io/storage/v2.0.0/schema.json'],
