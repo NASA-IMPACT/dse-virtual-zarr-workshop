@@ -26,6 +26,7 @@ dependencies:
   - curl
   - gcc
   - make
+  - memray
   - jupyter
   - pip
   - pipx
