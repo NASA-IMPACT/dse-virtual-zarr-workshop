@@ -4,25 +4,29 @@ title: "VirtualiZarr examples"
 
 ## Overview
 
-This workshop will include a mostly self-guided exploration of VirtualiZarr 2.0 for either pre-constructed examples or your own data.
+This workshop will include an explanation and exploration of VirtualiZarr 2.0.
 
 You can find out more about VirtualiZarr on [readthedocs](https://virtualizarr.readthedocs.io/en/stable/index.html) and explore the
 [source code on GitHub](https://github.com/zarr-developers/VirtualiZarr). If you're familiar with VirtualiZarr 1.0, check out the
 [migration guide](https://virtualizarr.readthedocs.io/en/stable/migration_guide.html) for information about how this new release differs.
 
-You can download the source code from GitHub:
+You can use the [VEDA Hub](https://docs.openveda.cloud/user-guide/scientific-computing/) to run the examples in this demo:
+
+- Navigate to [https://hub.openveda.cloud/](https://hub.openveda.cloud/)
+- Scroll to build your own image in the "Environment" dropdown
+    - Enter for “repository”: https://github.com/NASA-IMPACT/dse-virtual-zarr-workshop
+    - Enter for “Git Ref” (default): HEAD
+    - Click build image
+- Start a VEDA Hub with the “Build your own image option”
+    - Select Resource Allocation (Default): 1.9 GB RAM, up to 3.7 CPUs
+    - Click Start
+- Download the source code from GitHub:
 
 ```bash
-git clone git@github.com:virtual-zarr/esip-2025.git
-cd esip-2025
+git clone git@github.com:NASA-IMPACT/dse-virtual-zarr-workshop.git
+cd dse-virtual-zarr-workshop
 ```
 
-You can use [pixi](https://pixi.sh/latest/) to create an environment for these examples. After installing pixi, create an environment from the
-lock file via:
-
-```bash
-pixi install
-```
 
 ## Introductory presentation
 
