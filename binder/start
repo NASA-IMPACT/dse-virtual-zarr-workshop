@@ -1,7 +1,0 @@
-#!/bin/bash
-
-set -e
-
-git clone https://github.com/NASA-IMPACT/dse-virtual-zarr-workshop.git /home/${NB_USER}/dse-virtual-zarr-workshop
-cd /home/${NB_USER}/dse-virtual-zarr-workshop
-pixi install
