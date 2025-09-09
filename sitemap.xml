@@ -2,22 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://NASA-IMPACT.github.io/dse-virtual-zarr-workshop/examples/03_STAC_Collection_for_Virtual_Icechunk_Store.html</loc>
-    <lastmod>2025-09-08T20:01:34.270Z</lastmod>
+    <lastmod>2025-09-09T15:00:59.197Z</lastmod>
   </url>
   <url>
     <loc>https://NASA-IMPACT.github.io/dse-virtual-zarr-workshop/examples/04_STAC_Items_for_legacy_files_in_Virtual_Icechunk_Store.html</loc>
-    <lastmod>2025-09-08T20:01:34.270Z</lastmod>
+    <lastmod>2025-09-09T15:00:59.197Z</lastmod>
   </url>
   <url>
     <loc>https://NASA-IMPACT.github.io/dse-virtual-zarr-workshop/index.html</loc>
-    <lastmod>2025-09-08T20:01:34.270Z</lastmod>
+    <lastmod>2025-09-09T15:00:59.197Z</lastmod>
   </url>
   <url>
     <loc>https://NASA-IMPACT.github.io/dse-virtual-zarr-workshop/examples/01_AWS_Public_Data_Program_NetCDF.html</loc>
-    <lastmod>2025-09-08T20:01:34.269Z</lastmod>
+    <lastmod>2025-09-09T15:00:59.196Z</lastmod>
   </url>
   <url>
     <loc>https://NASA-IMPACT.github.io/dse-virtual-zarr-workshop/examples/02_ESGF_NetCDF_Solution.html</loc>
-    <lastmod>2025-09-08T20:01:34.269Z</lastmod>
+    <lastmod>2025-09-09T15:00:59.196Z</lastmod>
   </url>
 </urlset>
